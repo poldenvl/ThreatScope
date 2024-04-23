@@ -1,7 +1,7 @@
 {
   "name": "threatscope",
   "displayName": "ThreatScope",
-  "description": "",
+  "description": "Create markup from database",
   "icon": "icon.png",
   "version": "0.0.1",
   "engines": {
@@ -211,5 +211,10 @@
   },
   "dependencies": {
     "pg": "^8.11.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/poldenvl/ThreatScope.git"
   }
+
 }
