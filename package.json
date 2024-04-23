@@ -1,0 +1,215 @@
+{
+  "name": "threatscope",
+  "displayName": "ThreatScope",
+  "description": "",
+  "icon": "icon.png",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.83.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "ThreatScope",
+      "properties": {
+        "threatscope.DB.Login": {
+          "type": "string",
+          "scope": "resource",
+          "default": "postgres",
+          "description": "User login for database"
+        },
+        "threatscope.DB.Host": {
+          "type": "string",
+          "scope": "resource",
+          "default": "localhost",
+          "description": "IP host of database"
+        },
+        "threatscope.DB.DataBase": {
+          "type": "string",
+          "scope": "resource",
+          "default": "postgres",
+          "description": "Name of database"
+        },
+        "threatscope.DB.Password": {
+          "type": "string",
+          "scope": "resource",
+          "default": "123",
+          "description": "Database password"
+        },
+        "threatscope.DB.Port": {
+          "type": "integer",
+          "scope": "resource",
+          "default": 5432,
+          "description": "Database port"
+        },
+        "threatscope.Colour.Status.NotConfirmed": {
+          "type": "string",
+          "scope": "resource",
+          "default": "109, 116, 111, 0.25",
+          "description": "Not confirmed rgba colour",
+          "order": 0
+        },
+        "threatscope.Colour.Severity.LowSeverity": {
+          "type": "string",
+          "scope": "resource",
+          "default": "96, 169, 23, 0.25",
+          "description": "Low severity rgba colour",
+          "order": 1
+        },
+        "threatscope.Colour.Severity.MediumSeverity": {
+          "type": "string",
+          "scope": "resource",
+          "default": "240, 163, 10, 0.25",
+          "description": "Medium Severity rgba colour",
+          "order": 2
+        },
+        "threatscope.Colour.Severity.HighSeverity": {
+          "type": "string",
+          "scope": "resource",
+          "default": "250, 104, 0, 0.25",
+          "description": "High severity rgba colour",
+          "order": 3
+        },
+        "threatscope.Colour.Severity.CriticalSeverity": {
+          "type": "string",
+          "scope": "resource",
+          "default": "229, 20, 0, 0.25",
+          "description": "Critical severity rgba colour",
+          "order": 4
+        },
+        "threatscope.Colour.Severity.UnknownSeverity": {
+          "type": "string",
+          "scope": "resource",
+          "default": "109, 116, 111, 0.25",
+          "description": "Unknown severity rgba colour",
+          "order": 5
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "errorTree.refresh",
+        "title": "refresh",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "errorTree.changeToConfirmed",
+        "title": "Change status to confirmed"
+      },
+      {
+        "command": "errorTree.changeToNotConfirmed",
+        "title": "Change status to not confirmed"
+      },
+      {
+        "command": "errorTree.changeToLowSeverity",
+        "title": "Change severity to low severity"
+      },
+      {
+        "command": "errorTree.changeToMediumSeverity",
+        "title": "Change severity to medium severity"
+      },
+      {
+        "command": "errorTree.changeToHighSeverity",
+        "title": "Change severity to high severity"
+      },
+      {
+        "command": "errorTree.changeToCriticalSeverity",
+        "title": "Change severity to critical severity"
+      },
+      {
+        "command": "errorTree.changeToUnknownSeverity",
+        "title": "Change severity to unknown severity"
+      }
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "errorsTree",
+          "name": "Errors View"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "errorTree.refresh",
+          "when": "view == errorsTree",
+          "group": "navigation@0"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "errorTree.changeToNotConfirmed",
+          "when": "view == errorsTree",
+          "group": "menu@0"
+        },
+        {
+          "command": "errorTree.changeToConfirmed",
+          "when": "view == errorsTree",
+          "group": "menu@1"
+        },
+        {
+          "command": "errorTree.changeToLowSeverity",
+          "when": "view == errorsTree",
+          "group": "menu@2"
+        },
+        {
+          "command": "errorTree.changeToMediumSeverity",
+          "when": "view == errorsTree",
+          "group": "menu@3"
+        },
+        {
+          "command": "errorTree.changeToHighSeverity",
+          "when": "view == errorsTree",
+          "group": "menu@4"
+        },
+        {
+          "command": "errorTree.changeToCriticalSeverity",
+          "when": "view == errorsTree",
+          "group": "menu@5"
+        },
+        {
+          "command": "errorTree.changeToUnknownSeverity",
+          "when": "view == errorsTree",
+          "group": "menu@6"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "vscode:prepublish": "npm run esbuild-base -- --minify",
+    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node",
+    "esbuild": "npm run esbuild-base -- --sourcemap",
+    "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.3",
+    "@types/node": "18.x",
+    "@types/pg": "^8.10.7",
+    "@types/vscode": "^1.83.0",
+    "@typescript-eslint/eslint-plugin": "^6.9.0",
+    "@typescript-eslint/parser": "^6.9.0",
+    "@vscode/test-electron": "^2.3.6",
+    "esbuild": "^0.20.2",
+    "eslint": "^8.52.0",
+    "glob": "^10.3.10",
+    "mocha": "^10.2.0",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "pg": "^8.11.3"
+  }
+}
