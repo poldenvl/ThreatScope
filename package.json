@@ -10,7 +10,9 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onCommand:threatscope.activate"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "configuration": {
@@ -92,12 +94,12 @@
     },
     "commands": [
       {
+        "command": "threatscope.activate",
+        "title": "activate"
+      },
+      {
         "command": "errorTree.refresh",
-        "title": "refresh",
-        "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
-        }
+        "title": "refresh"
       },
       {
         "command": "errorTree.changeToConfirmed",
