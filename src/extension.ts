@@ -17,7 +17,8 @@ let pool = new Pool({
   });
 
 export async function activate(context: vscode.ExtensionContext) {
-	vscode.commands.registerCommand('threatscope.activate', r => vscode.window.showInformationMessage('Starting ThreatScope...'));
+	context.subscriptions.push(vscode.commands.registerCommand('threatscope.activate', 
+	r => vscode.window.showInformationMessage('Starting ThreatScope...')));
 	let data : any;
 	const changeSeverityCommand = "threatscope.changeSeverity";
 	const changeSeverityHandler = async(line: number, severity: string) => {

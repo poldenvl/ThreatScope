@@ -95,7 +95,7 @@
     "commands": [
       {
         "command": "threatscope.activate",
-        "title": "activate"
+        "title": "Activate ThreatScope"
       },
       {
         "command": "errorTree.refresh",
