@@ -1,21 +1,5017 @@
-"use strict";var ws=Object.create;var re=Object.defineProperty;var gs=Object.getOwnPropertyDescriptor;var _s=Object.getOwnPropertyNames;var Ss=Object.getPrototypeOf,Es=Object.prototype.hasOwnProperty;var bs=(r,e)=>()=>(r&&(e=r(r=0)),e);var p=(r,e)=>()=>(e||r((e={exports:{}}).exports,e),e.exports),Mt=(r,e)=>{for(var t in e)re(r,t,{get:e[t],enumerable:!0})},At=(r,e,t,s)=>{if(e&&typeof e=="object"||typeof e=="function")for(let i of _s(e))!Es.call(r,i)&&i!==t&&re(r,i,{get:()=>e[i],enumerable:!(s=gs(e,i))||s.enumerable});return r};var Rt=(r,e,t)=>(t=r!=null?ws(Ss(r)):{},At(e||!r||!r.__esModule?re(t,"default",{value:r,enumerable:!0}):t,r)),Dt=r=>At(re({},"__esModule",{value:!0}),r);var Pe=p(kt=>{"use strict";kt.parse=function(r,e){return new Ce(r,e).parse()};var Ce=class r{constructor(e,t){this.source=e,this.transform=t||Ts,this.position=0,this.entries=[],this.recorded=[],this.dimension=0}isEof(){return this.position>=this.source.length}nextCharacter(){var e=this.source[this.position++];return e==="\\"?{value:this.source[this.position++],escaped:!0}:{value:e,escaped:!1}}record(e){this.recorded.push(e)}newEntry(e){var t;(this.recorded.length>0||e)&&(t=this.recorded.join(""),t==="NULL"&&!e&&(t=null),t!==null&&(t=this.transform(t)),this.entries.push(t),this.recorded=[])}consumeDimensions(){if(this.source[0]==="[")for(;!this.isEof();){var e=this.nextCharacter();if(e.value==="=")break}}parse(e){var t,s,i;for(this.consumeDimensions();!this.isEof();)if(t=this.nextCharacter(),t.value==="{"&&!i)this.dimension++,this.dimension>1&&(s=new r(this.source.substr(this.position-1),this.transform),this.entries.push(s.parse(!0)),this.position+=s.position-2);else if(t.value==="}"&&!i){if(this.dimension--,!this.dimension&&(this.newEntry(),e))return this.entries}else t.value==='"'&&!t.escaped?(i&&this.newEntry(!0),i=!i):t.value===","&&!i?this.newEntry():this.record(t.value);if(this.dimension!==0)throw new Error("array dimension not balanced");return this.entries}};function Ts(r){return r}});var xe=p((Ca,qt)=>{var Cs=Pe();qt.exports={create:function(r,e){return{parse:function(){return Cs.parse(r,e)}}}}});var Bt=p((Pa,Lt)=>{"use strict";var Ps=/(\d{1,})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})(\.\d{1,})?.*?( BC)?$/,xs=/^(\d{1,})-(\d{2})-(\d{2})( BC)?$/,Is=/([Z+-])(\d{2})?:?(\d{2})?:?(\d{2})?/,Ms=/^-?infinity$/;Lt.exports=function(e){if(Ms.test(e))return Number(e.replace("i","I"));var t=Ps.exec(e);if(!t)return As(e)||null;var s=!!t[8],i=parseInt(t[1],10);s&&(i=Ot(i));var n=parseInt(t[2],10)-1,a=t[3],o=parseInt(t[4],10),u=parseInt(t[5],10),c=parseInt(t[6],10),l=t[7];l=l?1e3*parseFloat(l):0;var f,m=Rs(e);return m!=null?(f=new Date(Date.UTC(i,n,a,o,u,c,l)),Ie(i)&&f.setUTCFullYear(i),m!==0&&f.setTime(f.getTime()-m)):(f=new Date(i,n,a,o,u,c,l),Ie(i)&&f.setFullYear(i)),f};function As(r){var e=xs.exec(r);if(e){var t=parseInt(e[1],10),s=!!e[4];s&&(t=Ot(t));var i=parseInt(e[2],10)-1,n=e[3],a=new Date(t,i,n);return Ie(t)&&a.setFullYear(t),a}}function Rs(r){if(r.endsWith("+00"))return 0;var e=Is.exec(r.split(" ")[1]);if(e){var t=e[1];if(t==="Z")return 0;var s=t==="-"?-1:1,i=parseInt(e[2],10)*3600+parseInt(e[3]||0,10)*60+parseInt(e[4]||0,10);return i*s*1e3}}function Ot(r){return-(r-1)}function Ie(r){return r>=0&&r<100}});var Nt=p((xa,Qt)=>{Qt.exports=ks;var Ds=Object.prototype.hasOwnProperty;function ks(r){for(var e=1;e<arguments.length;e++){var t=arguments[e];for(var s in t)Ds.call(t,s)&&(r[s]=t[s])}return r}});var jt=p((Ia,Ut)=>{"use strict";var qs=Nt();Ut.exports=k;function k(r){if(!(this instanceof k))return new k(r);qs(this,Ws(r))}var Os=["seconds","minutes","hours","days","months","years"];k.prototype.toPostgres=function(){var r=Os.filter(this.hasOwnProperty,this);return this.milliseconds&&r.indexOf("seconds")<0&&r.push("seconds"),r.length===0?"0":r.map(function(e){var t=this[e]||0;return e==="seconds"&&this.milliseconds&&(t=(t+this.milliseconds/1e3).toFixed(6).replace(/\.?0+$/,"")),t+" "+e},this).join(" ")};var Ls={years:"Y",months:"M",days:"D",hours:"H",minutes:"M",seconds:"S"},Bs=["years","months","days"],Qs=["hours","minutes","seconds"];k.prototype.toISOString=k.prototype.toISO=function(){var r=Bs.map(t,this).join(""),e=Qs.map(t,this).join("");return"P"+r+"T"+e;function t(s){var i=this[s]||0;return s==="seconds"&&this.milliseconds&&(i=(i+this.milliseconds/1e3).toFixed(6).replace(/0+$/,"")),i+Ls[s]}};var Me="([+-]?\\d+)",Ns=Me+"\\s+years?",Fs=Me+"\\s+mons?",Us=Me+"\\s+days?",js="([+-])?([\\d]*):(\\d\\d):(\\d\\d)\\.?(\\d{1,6})?",Gs=new RegExp([Ns,Fs,Us,js].map(function(r){return"("+r+")?"}).join("\\s*")),Ft={years:2,months:4,days:6,hours:9,minutes:10,seconds:11,milliseconds:12},Hs=["hours","minutes","seconds","milliseconds"];function $s(r){var e=r+"000000".slice(r.length);return parseInt(e,10)/1e3}function Ws(r){if(!r)return{};var e=Gs.exec(r),t=e[8]==="-";return Object.keys(Ft).reduce(function(s,i){var n=Ft[i],a=e[n];return!a||(a=i==="milliseconds"?$s(a):parseInt(a,10),!a)||(t&&~Hs.indexOf(i)&&(a*=-1),s[i]=a),s},{})}});var Ht=p((Ma,Gt)=>{"use strict";Gt.exports=function(e){if(/^\\x/.test(e))return new Buffer(e.substr(2),"hex");for(var t="",s=0;s<e.length;)if(e[s]!=="\\")t+=e[s],++s;else if(/[0-7]{3}/.test(e.substr(s+1,3)))t+=String.fromCharCode(parseInt(e.substr(s+1,3),8)),s+=4;else{for(var i=1;s+i<e.length&&e[s+i]==="\\";)i++;for(var n=0;n<Math.floor(i/2);++n)t+="\\";s+=Math.floor(i/2)*2}return new Buffer(t,"binary")}});var Jt=p((Aa,Yt)=>{var H=Pe(),$=xe(),se=Bt(),Wt=jt(),Kt=Ht();function ie(r){return function(t){return t===null?t:r(t)}}function Vt(r){return r===null?r:r==="TRUE"||r==="t"||r==="true"||r==="y"||r==="yes"||r==="on"||r==="1"}function Ks(r){return r?H.parse(r,Vt):null}function Vs(r){return parseInt(r,10)}function Ae(r){return r?H.parse(r,ie(Vs)):null}function zs(r){return r?H.parse(r,ie(function(e){return zt(e).trim()})):null}var Ys=function(r){if(!r)return null;var e=$.create(r,function(t){return t!==null&&(t=qe(t)),t});return e.parse()},Re=function(r){if(!r)return null;var e=$.create(r,function(t){return t!==null&&(t=parseFloat(t)),t});return e.parse()},P=function(r){if(!r)return null;var e=$.create(r);return e.parse()},De=function(r){if(!r)return null;var e=$.create(r,function(t){return t!==null&&(t=se(t)),t});return e.parse()},Js=function(r){if(!r)return null;var e=$.create(r,function(t){return t!==null&&(t=Wt(t)),t});return e.parse()},Zs=function(r){return r?H.parse(r,ie(Kt)):null},ke=function(r){return parseInt(r,10)},zt=function(r){var e=String(r);return/^\d+$/.test(e)?e:r},$t=function(r){return r?H.parse(r,ie(JSON.parse)):null},qe=function(r){return r[0]!=="("?null:(r=r.substring(1,r.length-1).split(","),{x:parseFloat(r[0]),y:parseFloat(r[1])})},Xs=function(r){if(r[0]!=="<"&&r[1]!=="(")return null;for(var e="(",t="",s=!1,i=2;i<r.length-1;i++){if(s||(e+=r[i]),r[i]===")"){s=!0;continue}else if(!s)continue;r[i]!==","&&(t+=r[i])}var n=qe(e);return n.radius=parseFloat(t),n},ei=function(r){r(20,zt),r(21,ke),r(23,ke),r(26,ke),r(700,parseFloat),r(701,parseFloat),r(16,Vt),r(1082,se),r(1114,se),r(1184,se),r(600,qe),r(651,P),r(718,Xs),r(1e3,Ks),r(1001,Zs),r(1005,Ae),r(1007,Ae),r(1028,Ae),r(1016,zs),r(1017,Ys),r(1021,Re),r(1022,Re),r(1231,Re),r(1014,P),r(1015,P),r(1008,P),r(1009,P),r(1040,P),r(1041,P),r(1115,De),r(1182,De),r(1185,De),r(1186,Wt),r(1187,Js),r(17,Kt),r(114,JSON.parse.bind(JSON)),r(3802,JSON.parse.bind(JSON)),r(199,$t),r(3807,$t),r(3907,P),r(2951,P),r(791,P),r(1183,P),r(1270,P)};Yt.exports={init:ei}});var Xt=p((Ra,Zt)=>{"use strict";var b=1e6;function ti(r){var e=r.readInt32BE(0),t=r.readUInt32BE(4),s="";e<0&&(e=~e+(t===0),t=~t+1>>>0,s="-");var i="",n,a,o,u,c,l;{if(n=e%b,e=e/b>>>0,a=4294967296*n+t,t=a/b>>>0,o=""+(a-b*t),t===0&&e===0)return s+o+i;for(u="",c=6-o.length,l=0;l<c;l++)u+="0";i=u+o+i}{if(n=e%b,e=e/b>>>0,a=4294967296*n+t,t=a/b>>>0,o=""+(a-b*t),t===0&&e===0)return s+o+i;for(u="",c=6-o.length,l=0;l<c;l++)u+="0";i=u+o+i}{if(n=e%b,e=e/b>>>0,a=4294967296*n+t,t=a/b>>>0,o=""+(a-b*t),t===0&&e===0)return s+o+i;for(u="",c=6-o.length,l=0;l<c;l++)u+="0";i=u+o+i}return n=e%b,a=4294967296*n+t,o=""+a%b,s+o+i}Zt.exports=ti});var ir=p((Da,sr)=>{var ri=Xt(),y=function(r,e,t,s,i){t=t||0,s=s||!1,i=i||function(C,be,Te){return C*Math.pow(2,Te)+be};var n=t>>3,a=function(C){return s?~C&255:C},o=255,u=8-t%8;e<u&&(o=255<<8-e&255,u=e),t&&(o=o>>t%8);var c=0;t%8+e>=8&&(c=i(0,a(r[n])&o,u));for(var l=e+t>>3,f=n+1;f<l;f++)c=i(c,a(r[f]),8);var m=(e+t)%8;return m>0&&(c=i(c,a(r[l])>>8-m,m)),c},rr=function(r,e,t){var s=Math.pow(2,t-1)-1,i=y(r,1),n=y(r,t,1);if(n===0)return 0;var a=1,o=function(c,l,f){c===0&&(c=1);for(var m=1;m<=f;m++)a/=2,(l&1<<f-m)>0&&(c+=a);return c},u=y(r,e,t+1,!1,o);return n==Math.pow(2,t+1)-1?u===0?i===0?1/0:-1/0:NaN:(i===0?1:-1)*Math.pow(2,n-s)*u},si=function(r){return y(r,1)==1?-1*(y(r,15,1,!0)+1):y(r,15,1)},er=function(r){return y(r,1)==1?-1*(y(r,31,1,!0)+1):y(r,31,1)},ii=function(r){return rr(r,23,8)},ni=function(r){return rr(r,52,11)},ai=function(r){var e=y(r,16,32);if(e==49152)return NaN;for(var t=Math.pow(1e4,y(r,16,16)),s=0,i=[],n=y(r,16),a=0;a<n;a++)s+=y(r,16,64+16*a)*t,t/=1e4;var o=Math.pow(10,y(r,16,48));return(e===0?1:-1)*Math.round(s*o)/o},tr=function(r,e){var t=y(e,1),s=y(e,63,1),i=new Date((t===0?1:-1)*s/1e3+9466848e5);return r||i.setTime(i.getTime()+i.getTimezoneOffset()*6e4),i.usec=s%1e3,i.getMicroSeconds=function(){return this.usec},i.setMicroSeconds=function(n){this.usec=n},i.getUTCMicroSeconds=function(){return this.usec},i},W=function(r){for(var e=y(r,32),t=y(r,32,32),s=y(r,32,64),i=96,n=[],a=0;a<e;a++)n[a]=y(r,32,i),i+=32,i+=32;var o=function(c){var l=y(r,32,i);if(i+=32,l==4294967295)return null;var f;if(c==23||c==20)return f=y(r,l*8,i),i+=l*8,f;if(c==25)return f=r.toString(this.encoding,i>>3,(i+=l<<3)>>3),f;console.log("ERROR: ElementType not implemented: "+c)},u=function(c,l){var f=[],m;if(c.length>1){var C=c.shift();for(m=0;m<C;m++)f[m]=u(c,l);c.unshift(C)}else for(m=0;m<c[0];m++)f[m]=o(l);return f};return u(n,s)},oi=function(r){return r.toString("utf8")},ui=function(r){return r===null?null:y(r,8)>0},ci=function(r){r(20,ri),r(21,si),r(23,er),r(26,er),r(1700,ai),r(700,ii),r(701,ni),r(16,ui),r(1114,tr.bind(null,!1)),r(1184,tr.bind(null,!0)),r(1e3,W),r(1007,W),r(1016,W),r(1008,W),r(1009,W),r(25,oi)};sr.exports={init:ci}});var ar=p((ka,nr)=>{nr.exports={BOOL:16,BYTEA:17,CHAR:18,INT8:20,INT2:21,INT4:23,REGPROC:24,TEXT:25,OID:26,TID:27,XID:28,CID:29,JSON:114,XML:142,PG_NODE_TREE:194,SMGR:210,PATH:602,POLYGON:604,CIDR:650,FLOAT4:700,FLOAT8:701,ABSTIME:702,RELTIME:703,TINTERVAL:704,CIRCLE:718,MACADDR8:774,MONEY:790,MACADDR:829,INET:869,ACLITEM:1033,BPCHAR:1042,VARCHAR:1043,DATE:1082,TIME:1083,TIMESTAMP:1114,TIMESTAMPTZ:1184,INTERVAL:1186,TIMETZ:1266,BIT:1560,VARBIT:1562,NUMERIC:1700,REFCURSOR:1790,REGPROCEDURE:2202,REGOPER:2203,REGOPERATOR:2204,REGCLASS:2205,REGTYPE:2206,UUID:2950,TXID_SNAPSHOT:2970,PG_LSN:3220,PG_NDISTINCT:3361,PG_DEPENDENCIES:3402,TSVECTOR:3614,TSQUERY:3615,GTSVECTOR:3642,REGCONFIG:3734,REGDICTIONARY:3769,JSONB:3802,REGNAMESPACE:4089,REGROLE:4096}});var z=p(V=>{var hi=Jt(),li=ir(),di=xe(),fi=ar();V.getTypeParser=pi;V.setTypeParser=mi;V.arrayParser=di;V.builtins=fi;var K={text:{},binary:{}};function or(r){return String(r)}function pi(r,e){return e=e||"text",K[e]&&K[e][r]||or}function mi(r,e,t){typeof e=="function"&&(t=e,e="text"),K[e][r]=t}hi.init(function(r,e){K.text[r]=e});li.init(function(r,e){K.binary[r]=e})});var Y=p((Oa,Oe)=>{"use strict";Oe.exports={host:"localhost",user:process.platform==="win32"?process.env.USERNAME:process.env.USER,database:void 0,password:null,connectionString:void 0,port:5432,rows:0,binary:!1,max:10,idleTimeoutMillis:3e4,client_encoding:"",ssl:!1,application_name:void 0,fallback_application_name:void 0,options:void 0,parseInputDatesAsUTC:!1,statement_timeout:!1,lock_timeout:!1,idle_in_transaction_session_timeout:!1,query_timeout:!1,connect_timeout:0,keepalives:1,keepalives_idle:0};var q=z(),yi=q.getTypeParser(20,"text"),vi=q.getTypeParser(1016,"text");Oe.exports.__defineSetter__("parseInt8",function(r){q.setTypeParser(20,"text",r?q.getTypeParser(23,"text"):yi),q.setTypeParser(1016,"text",r?q.getTypeParser(1007,"text"):vi)})});var J=p((La,cr)=>{"use strict";var wi=Y();function gi(r){var e=r.replace(/\\/g,"\\\\").replace(/"/g,'\\"');return'"'+e+'"'}function ur(r){for(var e="{",t=0;t<r.length;t++)t>0&&(e=e+","),r[t]===null||typeof r[t]>"u"?e=e+"NULL":Array.isArray(r[t])?e=e+ur(r[t]):r[t]instanceof Buffer?e+="\\\\x"+r[t].toString("hex"):e+=gi(ne(r[t]));return e=e+"}",e}var ne=function(r,e){if(r==null)return null;if(r instanceof Buffer)return r;if(ArrayBuffer.isView(r)){var t=Buffer.from(r.buffer,r.byteOffset,r.byteLength);return t.length===r.byteLength?t:t.slice(r.byteOffset,r.byteOffset+r.byteLength)}return r instanceof Date?wi.parseInputDatesAsUTC?Ei(r):Si(r):Array.isArray(r)?ur(r):typeof r=="object"?_i(r,e):r.toString()};function _i(r,e){if(r&&typeof r.toPostgres=="function"){if(e=e||[],e.indexOf(r)!==-1)throw new Error('circular reference detected while preparing "'+r+'" for query');return e.push(r),ne(r.toPostgres(ne),e)}return JSON.stringify(r)}function S(r,e){for(r=""+r;r.length<e;)r="0"+r;return r}function Si(r){var e=-r.getTimezoneOffset(),t=r.getFullYear(),s=t<1;s&&(t=Math.abs(t)+1);var i=S(t,4)+"-"+S(r.getMonth()+1,2)+"-"+S(r.getDate(),2)+"T"+S(r.getHours(),2)+":"+S(r.getMinutes(),2)+":"+S(r.getSeconds(),2)+"."+S(r.getMilliseconds(),3);return e<0?(i+="-",e*=-1):i+="+",i+=S(Math.floor(e/60),2)+":"+S(e%60,2),s&&(i+=" BC"),i}function Ei(r){var e=r.getUTCFullYear(),t=e<1;t&&(e=Math.abs(e)+1);var s=S(e,4)+"-"+S(r.getUTCMonth()+1,2)+"-"+S(r.getUTCDate(),2)+"T"+S(r.getUTCHours(),2)+":"+S(r.getUTCMinutes(),2)+":"+S(r.getUTCSeconds(),2)+"."+S(r.getUTCMilliseconds(),3);return s+="+00:00",t&&(s+=" BC"),s}function bi(r,e,t){return r=typeof r=="string"?{text:r}:r,e&&(typeof e=="function"?r.callback=e:r.values=e),t&&(r.callback=t),r}var Ti=function(r){return'"'+r.replace(/"/g,'""')+'"'},Ci=function(r){for(var e=!1,t="'",s=0;s<r.length;s++){var i=r[s];i==="'"?t+=i+i:i==="\\"?(t+=i+i,e=!0):t+=i}return t+="'",e===!0&&(t=" E"+t),t};cr.exports={prepareValue:function(e){return ne(e)},normalizeQueryConfig:bi,escapeIdentifier:Ti,escapeLiteral:Ci}});var lr=p((Ba,hr)=>{"use strict";var Z=require("crypto");function Le(r){return Z.createHash("md5").update(r,"utf-8").digest("hex")}function Pi(r,e,t){var s=Le(e+r),i=Le(Buffer.concat([Buffer.from(s),t]));return"md5"+i}function xi(r){return Z.createHash("sha256").update(r).digest()}function Ii(r,e){return Z.createHmac("sha256",r).update(e).digest()}async function Mi(r,e,t){return Z.pbkdf2Sync(r,e,t,32,"sha256")}hr.exports={postgresMd5PasswordHash:Pi,randomBytes:Z.randomBytes,deriveKey:Mi,sha256:xi,hmacSha256:Ii,md5:Le}});var mr=p((Qa,pr)=>{var dr=require("crypto");pr.exports={postgresMd5PasswordHash:Ri,randomBytes:Ai,deriveKey:qi,sha256:Di,hmacSha256:ki,md5:Be};var fr=dr.webcrypto||globalThis.crypto,O=fr.subtle,Qe=new TextEncoder;function Ai(r){return fr.getRandomValues(Buffer.alloc(r))}async function Be(r){try{return dr.createHash("md5").update(r,"utf-8").digest("hex")}catch{let t=typeof r=="string"?Qe.encode(r):r,s=await O.digest("MD5",t);return Array.from(new Uint8Array(s)).map(i=>i.toString(16).padStart(2,"0")).join("")}}async function Ri(r,e,t){var s=await Be(e+r),i=await Be(Buffer.concat([Buffer.from(s),t]));return"md5"+i}async function Di(r){return await O.digest("SHA-256",r)}async function ki(r,e){let t=await O.importKey("raw",r,{name:"HMAC",hash:"SHA-256"},!1,["sign"]);return await O.sign("HMAC",t,Qe.encode(e))}async function qi(r,e,t){let s=await O.importKey("raw",Qe.encode(r),"PBKDF2",!1,["deriveBits"]),i={name:"PBKDF2",hash:"SHA-256",salt:e,iterations:t};return await O.deriveBits(i,s,32*8,["deriveBits"])}});var Fe=p((Na,Ne)=>{"use strict";var Oi=parseInt(process.versions&&process.versions.node&&process.versions.node.split(".")[0])<15;Oi?Ne.exports=lr():Ne.exports=mr()});var gr=p((Fa,wr)=>{"use strict";var R=Fe();function Li(r){if(r.indexOf("SCRAM-SHA-256")===-1)throw new Error("SASL: Only mechanism SCRAM-SHA-256 is currently supported");let e=R.randomBytes(18).toString("base64");return{mechanism:"SCRAM-SHA-256",clientNonce:e,response:"n,,n=*,r="+e,message:"SASLInitialResponse"}}async function Bi(r,e,t){if(r.message!=="SASLInitialResponse")throw new Error("SASL: Last message was not SASLInitialResponse");if(typeof e!="string")throw new Error("SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string");if(e==="")throw new Error("SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a non-empty string");if(typeof t!="string")throw new Error("SASL: SCRAM-SERVER-FIRST-MESSAGE: serverData must be a string");let s=Fi(t);if(s.nonce.startsWith(r.clientNonce)){if(s.nonce.length===r.clientNonce.length)throw new Error("SASL: SCRAM-SERVER-FIRST-MESSAGE: server nonce is too short")}else throw new Error("SASL: SCRAM-SERVER-FIRST-MESSAGE: server nonce does not start with client nonce");var i="n=*,r="+r.clientNonce,n="r="+s.nonce+",s="+s.salt+",i="+s.iteration,a="c=biws,r="+s.nonce,o=i+","+n+","+a,u=Buffer.from(s.salt,"base64"),c=await R.deriveKey(e,u,s.iteration),l=await R.hmacSha256(c,"Client Key"),f=await R.sha256(l),m=await R.hmacSha256(f,o),C=ji(Buffer.from(l),Buffer.from(m)).toString("base64"),be=await R.hmacSha256(c,"Server Key"),Te=await R.hmacSha256(be,o);r.message="SASLResponse",r.serverSignature=Buffer.from(Te).toString("base64"),r.response=a+",p="+C}function Qi(r,e){if(r.message!=="SASLResponse")throw new Error("SASL: Last message was not SASLResponse");if(typeof e!="string")throw new Error("SASL: SCRAM-SERVER-FINAL-MESSAGE: serverData must be a string");let{serverSignature:t}=Ui(e);if(t!==r.serverSignature)throw new Error("SASL: SCRAM-SERVER-FINAL-MESSAGE: server signature does not match")}function Ni(r){if(typeof r!="string")throw new TypeError("SASL: text must be a string");return r.split("").map((e,t)=>r.charCodeAt(t)).every(e=>e>=33&&e<=43||e>=45&&e<=126)}function yr(r){return/^(?:[a-zA-Z0-9+/]{4})*(?:[a-zA-Z0-9+/]{2}==|[a-zA-Z0-9+/]{3}=)?$/.test(r)}function vr(r){if(typeof r!="string")throw new TypeError("SASL: attribute pairs text must be a string");return new Map(r.split(",").map(e=>{if(!/^.=/.test(e))throw new Error("SASL: Invalid attribute pair entry");let t=e[0],s=e.substring(2);return[t,s]}))}function Fi(r){let e=vr(r),t=e.get("r");if(t){if(!Ni(t))throw new Error("SASL: SCRAM-SERVER-FIRST-MESSAGE: nonce must only contain printable characters")}else throw new Error("SASL: SCRAM-SERVER-FIRST-MESSAGE: nonce missing");let s=e.get("s");if(s){if(!yr(s))throw new Error("SASL: SCRAM-SERVER-FIRST-MESSAGE: salt must be base64")}else throw new Error("SASL: SCRAM-SERVER-FIRST-MESSAGE: salt missing");let i=e.get("i");if(i){if(!/^[1-9][0-9]*$/.test(i))throw new Error("SASL: SCRAM-SERVER-FIRST-MESSAGE: invalid iteration count")}else throw new Error("SASL: SCRAM-SERVER-FIRST-MESSAGE: iteration missing");let n=parseInt(i,10);return{nonce:t,salt:s,iteration:n}}function Ui(r){let t=vr(r).get("v");if(t){if(!yr(t))throw new Error("SASL: SCRAM-SERVER-FINAL-MESSAGE: server signature must be base64")}else throw new Error("SASL: SCRAM-SERVER-FINAL-MESSAGE: server signature is missing");return{serverSignature:t}}function ji(r,e){if(!Buffer.isBuffer(r))throw new TypeError("first argument must be a Buffer");if(!Buffer.isBuffer(e))throw new TypeError("second argument must be a Buffer");if(r.length!==e.length)throw new Error("Buffer lengths must match");if(r.length===0)throw new Error("Buffers cannot be empty");return Buffer.from(r.map((t,s)=>r[s]^e[s]))}wr.exports={startSession:Li,continueSession:Bi,finalizeSession:Qi}});var Ue=p((Ua,_r)=>{"use strict";var Gi=z();function ae(r){this._types=r||Gi,this.text={},this.binary={}}ae.prototype.getOverrides=function(r){switch(r){case"text":return this.text;case"binary":return this.binary;default:return{}}};ae.prototype.setTypeParser=function(r,e,t){typeof e=="function"&&(t=e,e="text"),this.getOverrides(e)[r]=t};ae.prototype.getTypeParser=function(r,e){return e=e||"text",this.getOverrides(e)[r]||this._types.getTypeParser(r,e)};_r.exports=ae});var Er=p((ja,Sr)=>{"use strict";function je(r){if(r.charAt(0)==="/"){let o=r.split(" ");return{host:o[0],database:o[1]}}let e={},t,s=!1;/ |%[^a-f0-9]|%[a-f0-9][^a-f0-9]/i.test(r)&&(r=encodeURI(r).replace(/\%25(\d\d)/g,"%$1"));try{t=new URL(r,"postgres://base")}catch{t=new URL(r.replace("@/","@___DUMMY___/"),"postgres://base"),s=!0}for(let o of t.searchParams.entries())e[o[0]]=o[1];if(e.user=e.user||decodeURIComponent(t.username),e.password=e.password||decodeURIComponent(t.password),t.protocol=="socket:")return e.host=decodeURI(t.pathname),e.database=t.searchParams.get("db"),e.client_encoding=t.searchParams.get("encoding"),e;let i=s?"":t.hostname;e.host?i&&/^%2f/i.test(i)&&(t.pathname=i+t.pathname):e.host=decodeURIComponent(i),e.port||(e.port=t.port);let n=t.pathname.slice(1)||null;e.database=n?decodeURI(n):null,(e.ssl==="true"||e.ssl==="1")&&(e.ssl=!0),e.ssl==="0"&&(e.ssl=!1),(e.sslcert||e.sslkey||e.sslrootcert||e.sslmode)&&(e.ssl={});let a=e.sslcert||e.sslkey||e.sslrootcert?require("fs"):null;switch(e.sslcert&&(e.ssl.cert=a.readFileSync(e.sslcert).toString()),e.sslkey&&(e.ssl.key=a.readFileSync(e.sslkey).toString()),e.sslrootcert&&(e.ssl.ca=a.readFileSync(e.sslrootcert).toString()),e.sslmode){case"disable":{e.ssl=!1;break}case"prefer":case"require":case"verify-ca":case"verify-full":break;case"no-verify":{e.ssl.rejectUnauthorized=!1;break}}return e}Sr.exports=je;je.parse=je});var He=p((Ga,Cr)=>{"use strict";var Hi=require("dns"),Tr=Y(),br=Er().parse,E=function(r,e,t){return t===void 0?t=process.env["PG"+r.toUpperCase()]:t===!1||(t=process.env[t]),e[r]||t||Tr[r]},$i=function(){switch(process.env.PGSSLMODE){case"disable":return!1;case"prefer":case"require":case"verify-ca":case"verify-full":return!0;case"no-verify":return{rejectUnauthorized:!1}}return Tr.ssl},L=function(r){return"'"+(""+r).replace(/\\/g,"\\\\").replace(/'/g,"\\'")+"'"},x=function(r,e,t){var s=e[t];s!=null&&r.push(t+"="+L(s))},Ge=class{constructor(e){e=typeof e=="string"?br(e):e||{},e.connectionString&&(e=Object.assign({},e,br(e.connectionString))),this.user=E("user",e),this.database=E("database",e),this.database===void 0&&(this.database=this.user),this.port=parseInt(E("port",e),10),this.host=E("host",e),Object.defineProperty(this,"password",{configurable:!0,enumerable:!1,writable:!0,value:E("password",e)}),this.binary=E("binary",e),this.options=E("options",e),this.ssl=typeof e.ssl>"u"?$i():e.ssl,typeof this.ssl=="string"&&this.ssl==="true"&&(this.ssl=!0),this.ssl==="no-verify"&&(this.ssl={rejectUnauthorized:!1}),this.ssl&&this.ssl.key&&Object.defineProperty(this.ssl,"key",{enumerable:!1}),this.client_encoding=E("client_encoding",e),this.replication=E("replication",e),this.isDomainSocket=!(this.host||"").indexOf("/"),this.application_name=E("application_name",e,"PGAPPNAME"),this.fallback_application_name=E("fallback_application_name",e,!1),this.statement_timeout=E("statement_timeout",e,!1),this.lock_timeout=E("lock_timeout",e,!1),this.idle_in_transaction_session_timeout=E("idle_in_transaction_session_timeout",e,!1),this.query_timeout=E("query_timeout",e,!1),e.connectionTimeoutMillis===void 0?this.connect_timeout=process.env.PGCONNECT_TIMEOUT||0:this.connect_timeout=Math.floor(e.connectionTimeoutMillis/1e3),e.keepAlive===!1?this.keepalives=0:e.keepAlive===!0&&(this.keepalives=1),typeof e.keepAliveInitialDelayMillis=="number"&&(this.keepalives_idle=Math.floor(e.keepAliveInitialDelayMillis/1e3))}getLibpqConnectionString(e){var t=[];x(t,this,"user"),x(t,this,"password"),x(t,this,"port"),x(t,this,"application_name"),x(t,this,"fallback_application_name"),x(t,this,"connect_timeout"),x(t,this,"options");var s=typeof this.ssl=="object"?this.ssl:this.ssl?{sslmode:this.ssl}:{};if(x(t,s,"sslmode"),x(t,s,"sslca"),x(t,s,"sslkey"),x(t,s,"sslcert"),x(t,s,"sslrootcert"),this.database&&t.push("dbname="+L(this.database)),this.replication&&t.push("replication="+L(this.replication)),this.host&&t.push("host="+L(this.host)),this.isDomainSocket)return e(null,t.join(" "));this.client_encoding&&t.push("client_encoding="+L(this.client_encoding)),Hi.lookup(this.host,function(i,n){return i?e(i,null):(t.push("hostaddr="+L(n)),e(null,t.join(" ")))})}};Cr.exports=Ge});var Ir=p((Ha,xr)=>{"use strict";var Wi=z(),Pr=/^([A-Za-z]+)(?: (\d+))?(?: (\d+))?/,$e=class{constructor(e,t){this.command=null,this.rowCount=null,this.oid=null,this.rows=[],this.fields=[],this._parsers=void 0,this._types=t,this.RowCtor=null,this.rowAsArray=e==="array",this.rowAsArray&&(this.parseRow=this._parseRowAsArray),this._prebuiltEmptyResultObject=null}addCommandComplete(e){var t;e.text?t=Pr.exec(e.text):t=Pr.exec(e.command),t&&(this.command=t[1],t[3]?(this.oid=parseInt(t[2],10),this.rowCount=parseInt(t[3],10)):t[2]&&(this.rowCount=parseInt(t[2],10)))}_parseRowAsArray(e){for(var t=new Array(e.length),s=0,i=e.length;s<i;s++){var n=e[s];n!==null?t[s]=this._parsers[s](n):t[s]=null}return t}parseRow(e){for(var t={...this._prebuiltEmptyResultObject},s=0,i=e.length;s<i;s++){var n=e[s],a=this.fields[s].name;n!==null&&(t[a]=this._parsers[s](n))}return t}addRow(e){this.rows.push(e)}addFields(e){this.fields=e,this.fields.length&&(this._parsers=new Array(e.length));for(var t=0;t<e.length;t++){var s=e[t];this._types?this._parsers[t]=this._types.getTypeParser(s.dataTypeID,s.format||"text"):this._parsers[t]=Wi.getTypeParser(s.dataTypeID,s.format||"text")}this._createPrebuiltEmptyResultObject()}_createPrebuiltEmptyResultObject(){for(var e={},t=0;t<this.fields.length;t++)e[this.fields[t].name]=null;this._prebuiltEmptyResultObject={...e}}};xr.exports=$e});var Dr=p(($a,Rr)=>{"use strict";var{EventEmitter:Ki}=require("events"),Mr=Ir(),Ar=J(),We=class extends Ki{constructor(e,t,s){super(),e=Ar.normalizeQueryConfig(e,t,s),this.text=e.text,this.values=e.values,this.rows=e.rows,this.types=e.types,this.name=e.name,this.binary=e.binary,this.portal=e.portal||"",this.callback=e.callback,this._rowMode=e.rowMode,process.domain&&e.callback&&(this.callback=process.domain.bind(e.callback)),this._result=new Mr(this._rowMode,this.types),this._results=this._result,this.isPreparedStatement=!1,this._canceledDueToError=!1,this._promise=null}requiresPreparation(){return this.name||this.rows?!0:!this.text||!this.values?!1:this.values.length>0}_checkForMultirow(){this._result.command&&(Array.isArray(this._results)||(this._results=[this._result]),this._result=new Mr(this._rowMode,this.types),this._results.push(this._result))}handleRowDescription(e){this._checkForMultirow(),this._result.addFields(e.fields),this._accumulateRows=this.callback||!this.listeners("row").length}handleDataRow(e){let t;if(!this._canceledDueToError){try{t=this._result.parseRow(e.fields)}catch(s){this._canceledDueToError=s;return}this.emit("row",t,this._result),this._accumulateRows&&this._result.addRow(t)}}handleCommandComplete(e,t){this._checkForMultirow(),this._result.addCommandComplete(e),this.rows&&t.sync()}handleEmptyQuery(e){this.rows&&e.sync()}handleError(e,t){if(this._canceledDueToError&&(e=this._canceledDueToError,this._canceledDueToError=!1),this.callback)return this.callback(e);this.emit("error",e)}handleReadyForQuery(e){if(this._canceledDueToError)return this.handleError(this._canceledDueToError,e);if(this.callback)try{this.callback(null,this._results)}catch(t){process.nextTick(()=>{throw t})}this.emit("end",this._results)}submit(e){if(typeof this.text!="string"&&typeof this.name!="string")return new Error("A query must have either text or a name. Supplying neither is unsupported.");let t=e.parsedStatements[this.name];return this.text&&t&&this.text!==t?new Error(`Prepared statements must be unique - '${this.name}' was used for a different statement`):this.values&&!Array.isArray(this.values)?new Error("Query values must be an array"):(this.requiresPreparation()?this.prepare(e):e.query(this.text),null)}hasBeenParsed(e){return this.name&&e.parsedStatements[this.name]}handlePortalSuspended(e){this._getRows(e,this.rows)}_getRows(e,t){e.execute({portal:this.portal,rows:t}),t?e.flush():e.sync()}prepare(e){this.isPreparedStatement=!0,this.hasBeenParsed(e)||e.parse({text:this.text,name:this.name,types:this.types});try{e.bind({portal:this.portal,statement:this.name,values:this.values,binary:this.binary,valueMapper:Ar.prepareValue})}catch(t){this.handleError(t,e);return}e.describe({type:"P",name:this.portal||""}),this._getRows(e,this.rows)}handleCopyInResponse(e){e.sendCopyFail("No source stream defined")}handleCopyData(e,t){}};Rr.exports=We});var ot=p(d=>{"use strict";Object.defineProperty(d,"__esModule",{value:!0});d.NoticeMessage=d.DataRowMessage=d.CommandCompleteMessage=d.ReadyForQueryMessage=d.NotificationResponseMessage=d.BackendKeyDataMessage=d.AuthenticationMD5Password=d.ParameterStatusMessage=d.ParameterDescriptionMessage=d.RowDescriptionMessage=d.Field=d.CopyResponse=d.CopyDataMessage=d.DatabaseError=d.copyDone=d.emptyQuery=d.replicationStart=d.portalSuspended=d.noData=d.closeComplete=d.bindComplete=d.parseComplete=void 0;d.parseComplete={name:"parseComplete",length:5};d.bindComplete={name:"bindComplete",length:5};d.closeComplete={name:"closeComplete",length:5};d.noData={name:"noData",length:5};d.portalSuspended={name:"portalSuspended",length:5};d.replicationStart={name:"replicationStart",length:4};d.emptyQuery={name:"emptyQuery",length:4};d.copyDone={name:"copyDone",length:4};var Ke=class extends Error{constructor(e,t,s){super(e),this.length=t,this.name=s}};d.DatabaseError=Ke;var Ve=class{constructor(e,t){this.length=e,this.chunk=t,this.name="copyData"}};d.CopyDataMessage=Ve;var ze=class{constructor(e,t,s,i){this.length=e,this.name=t,this.binary=s,this.columnTypes=new Array(i)}};d.CopyResponse=ze;var Ye=class{constructor(e,t,s,i,n,a,o){this.name=e,this.tableID=t,this.columnID=s,this.dataTypeID=i,this.dataTypeSize=n,this.dataTypeModifier=a,this.format=o}};d.Field=Ye;var Je=class{constructor(e,t){this.length=e,this.fieldCount=t,this.name="rowDescription",this.fields=new Array(this.fieldCount)}};d.RowDescriptionMessage=Je;var Ze=class{constructor(e,t){this.length=e,this.parameterCount=t,this.name="parameterDescription",this.dataTypeIDs=new Array(this.parameterCount)}};d.ParameterDescriptionMessage=Ze;var Xe=class{constructor(e,t,s){this.length=e,this.parameterName=t,this.parameterValue=s,this.name="parameterStatus"}};d.ParameterStatusMessage=Xe;var et=class{constructor(e,t){this.length=e,this.salt=t,this.name="authenticationMD5Password"}};d.AuthenticationMD5Password=et;var tt=class{constructor(e,t,s){this.length=e,this.processID=t,this.secretKey=s,this.name="backendKeyData"}};d.BackendKeyDataMessage=tt;var rt=class{constructor(e,t,s,i){this.length=e,this.processId=t,this.channel=s,this.payload=i,this.name="notification"}};d.NotificationResponseMessage=rt;var st=class{constructor(e,t){this.length=e,this.status=t,this.name="readyForQuery"}};d.ReadyForQueryMessage=st;var it=class{constructor(e,t){this.length=e,this.text=t,this.name="commandComplete"}};d.CommandCompleteMessage=it;var nt=class{constructor(e,t){this.length=e,this.fields=t,this.name="dataRow",this.fieldCount=t.length}};d.DataRowMessage=nt;var at=class{constructor(e,t){this.length=e,this.message=t,this.name="notice"}};d.NoticeMessage=at});var kr=p(oe=>{"use strict";Object.defineProperty(oe,"__esModule",{value:!0});oe.Writer=void 0;var ut=class{constructor(e=256){this.size=e,this.offset=5,this.headerPosition=0,this.buffer=Buffer.allocUnsafe(e)}ensure(e){var t=this.buffer.length-this.offset;if(t<e){var s=this.buffer,i=s.length+(s.length>>1)+e;this.buffer=Buffer.allocUnsafe(i),s.copy(this.buffer)}}addInt32(e){return this.ensure(4),this.buffer[this.offset++]=e>>>24&255,this.buffer[this.offset++]=e>>>16&255,this.buffer[this.offset++]=e>>>8&255,this.buffer[this.offset++]=e>>>0&255,this}addInt16(e){return this.ensure(2),this.buffer[this.offset++]=e>>>8&255,this.buffer[this.offset++]=e>>>0&255,this}addCString(e){if(!e)this.ensure(1);else{var t=Buffer.byteLength(e);this.ensure(t+1),this.buffer.write(e,this.offset,"utf-8"),this.offset+=t}return this.buffer[this.offset++]=0,this}addString(e=""){var t=Buffer.byteLength(e);return this.ensure(t),this.buffer.write(e,this.offset),this.offset+=t,this}add(e){return this.ensure(e.length),e.copy(this.buffer,this.offset),this.offset+=e.length,this}join(e){if(e){this.buffer[this.headerPosition]=e;let t=this.offset-(this.headerPosition+1);this.buffer.writeInt32BE(t,this.headerPosition+1)}return this.buffer.slice(e?0:5,this.offset)}flush(e){var t=this.join(e);return this.offset=5,this.headerPosition=0,this.buffer=Buffer.allocUnsafe(this.size),t}};oe.Writer=ut});var Or=p(ce=>{"use strict";Object.defineProperty(ce,"__esModule",{value:!0});ce.serialize=void 0;var ct=kr(),v=new ct.Writer,Vi=r=>{v.addInt16(3).addInt16(0);for(let s of Object.keys(r))v.addCString(s).addCString(r[s]);v.addCString("client_encoding").addCString("UTF8");var e=v.addCString("").flush(),t=e.length+4;return new ct.Writer().addInt32(t).add(e).flush()},zi=()=>{let r=Buffer.allocUnsafe(8);return r.writeInt32BE(8,0),r.writeInt32BE(80877103,4),r},Yi=r=>v.addCString(r).flush(112),Ji=function(r,e){return v.addCString(r).addInt32(Buffer.byteLength(e)).addString(e),v.flush(112)},Zi=function(r){return v.addString(r).flush(112)},Xi=r=>v.addCString(r).flush(81),qr=[],en=r=>{let e=r.name||"";e.length>63&&(console.error("Warning! Postgres only supports 63 characters for query names."),console.error("You supplied %s (%s)",e,e.length),console.error("This can cause conflicts and silent errors executing queries"));let t=r.types||qr;for(var s=t.length,i=v.addCString(e).addCString(r.text).addInt16(s),n=0;n<s;n++)i.addInt32(t[n]);return v.flush(80)},B=new ct.Writer,tn=function(r,e){for(let t=0;t<r.length;t++){let s=e?e(r[t],t):r[t];s==null?(v.addInt16(0),B.addInt32(-1)):s instanceof Buffer?(v.addInt16(1),B.addInt32(s.length),B.add(s)):(v.addInt16(0),B.addInt32(Buffer.byteLength(s)),B.addString(s))}},rn=(r={})=>{let e=r.portal||"",t=r.statement||"",s=r.binary||!1,i=r.values||qr,n=i.length;return v.addCString(e).addCString(t),v.addInt16(n),tn(i,r.valueMapper),v.addInt16(n),v.add(B.flush()),v.addInt16(s?1:0),v.flush(66)},sn=Buffer.from([69,0,0,0,9,0,0,0,0,0]),nn=r=>{if(!r||!r.portal&&!r.rows)return sn;let e=r.portal||"",t=r.rows||0,s=Buffer.byteLength(e),i=4+s+1+4,n=Buffer.allocUnsafe(1+i);return n[0]=69,n.writeInt32BE(i,1),n.write(e,5,"utf-8"),n[s+5]=0,n.writeUInt32BE(t,n.length-4),n},an=(r,e)=>{let t=Buffer.allocUnsafe(16);return t.writeInt32BE(16,0),t.writeInt16BE(1234,4),t.writeInt16BE(5678,6),t.writeInt32BE(r,8),t.writeInt32BE(e,12),t},ht=(r,e)=>{let s=4+Buffer.byteLength(e)+1,i=Buffer.allocUnsafe(1+s);return i[0]=r,i.writeInt32BE(s,1),i.write(e,5,"utf-8"),i[s]=0,i},on=v.addCString("P").flush(68),un=v.addCString("S").flush(68),cn=r=>r.name?ht(68,`${r.type}${r.name||""}`):r.type==="P"?on:un,hn=r=>{let e=`${r.type}${r.name||""}`;return ht(67,e)},ln=r=>v.add(r).flush(100),dn=r=>ht(102,r),ue=r=>Buffer.from([r,0,0,0,4]),fn=ue(72),pn=ue(83),mn=ue(88),yn=ue(99),vn={startup:Vi,password:Yi,requestSsl:zi,sendSASLInitialResponseMessage:Ji,sendSCRAMClientFinalMessage:Zi,query:Xi,parse:en,bind:rn,execute:nn,describe:cn,close:hn,flush:()=>fn,sync:()=>pn,end:()=>mn,copyData:ln,copyDone:()=>yn,copyFail:dn,cancel:an};ce.serialize=vn});var Lr=p(he=>{"use strict";Object.defineProperty(he,"__esModule",{value:!0});he.BufferReader=void 0;var wn=Buffer.allocUnsafe(0),lt=class{constructor(e=0){this.offset=e,this.buffer=wn,this.encoding="utf-8"}setBuffer(e,t){this.offset=e,this.buffer=t}int16(){let e=this.buffer.readInt16BE(this.offset);return this.offset+=2,e}byte(){let e=this.buffer[this.offset];return this.offset++,e}int32(){let e=this.buffer.readInt32BE(this.offset);return this.offset+=4,e}string(e){let t=this.buffer.toString(this.encoding,this.offset,this.offset+e);return this.offset+=e,t}cstring(){let e=this.offset,t=e;for(;this.buffer[t++]!==0;);return this.offset=t,this.buffer.toString(this.encoding,e,t-1)}bytes(e){let t=this.buffer.slice(this.offset,this.offset+e);return this.offset+=e,t}};he.BufferReader=lt});var Nr=p(Q=>{"use strict";var gn=Q&&Q.__importDefault||function(r){return r&&r.__esModule?r:{default:r}};Object.defineProperty(Q,"__esModule",{value:!0});Q.Parser=void 0;var w=ot(),_n=Lr(),Sn=gn(require("assert")),dt=1,En=4,Br=dt+En,Qr=Buffer.allocUnsafe(0),ft=class{constructor(e){if(this.buffer=Qr,this.bufferLength=0,this.bufferOffset=0,this.reader=new _n.BufferReader,e?.mode==="binary")throw new Error("Binary mode not supported yet");this.mode=e?.mode||"text"}parse(e,t){this.mergeBuffer(e);let s=this.bufferOffset+this.bufferLength,i=this.bufferOffset;for(;i+Br<=s;){let n=this.buffer[i],a=this.buffer.readUInt32BE(i+dt),o=dt+a;if(o+i<=s){let u=this.handlePacket(i+Br,n,a,this.buffer);t(u),i+=o}else break}i===s?(this.buffer=Qr,this.bufferLength=0,this.bufferOffset=0):(this.bufferLength=s-i,this.bufferOffset=i)}mergeBuffer(e){if(this.bufferLength>0){let t=this.bufferLength+e.byteLength;if(t+this.bufferOffset>this.buffer.byteLength){let i;if(t<=this.buffer.byteLength&&this.bufferOffset>=this.bufferLength)i=this.buffer;else{let n=this.buffer.byteLength*2;for(;t>=n;)n*=2;i=Buffer.allocUnsafe(n)}this.buffer.copy(i,0,this.bufferOffset,this.bufferOffset+this.bufferLength),this.buffer=i,this.bufferOffset=0}e.copy(this.buffer,this.bufferOffset+this.bufferLength),this.bufferLength=t}else this.buffer=e,this.bufferOffset=0,this.bufferLength=e.byteLength}handlePacket(e,t,s,i){switch(t){case 50:return w.bindComplete;case 49:return w.parseComplete;case 51:return w.closeComplete;case 110:return w.noData;case 115:return w.portalSuspended;case 99:return w.copyDone;case 87:return w.replicationStart;case 73:return w.emptyQuery;case 68:return this.parseDataRowMessage(e,s,i);case 67:return this.parseCommandCompleteMessage(e,s,i);case 90:return this.parseReadyForQueryMessage(e,s,i);case 65:return this.parseNotificationMessage(e,s,i);case 82:return this.parseAuthenticationResponse(e,s,i);case 83:return this.parseParameterStatusMessage(e,s,i);case 75:return this.parseBackendKeyData(e,s,i);case 69:return this.parseErrorMessage(e,s,i,"error");case 78:return this.parseErrorMessage(e,s,i,"notice");case 84:return this.parseRowDescriptionMessage(e,s,i);case 116:return this.parseParameterDescriptionMessage(e,s,i);case 71:return this.parseCopyInMessage(e,s,i);case 72:return this.parseCopyOutMessage(e,s,i);case 100:return this.parseCopyData(e,s,i);default:Sn.default.fail(`unknown message code: ${t.toString(16)}`)}}parseReadyForQueryMessage(e,t,s){this.reader.setBuffer(e,s);let i=this.reader.string(1);return new w.ReadyForQueryMessage(t,i)}parseCommandCompleteMessage(e,t,s){this.reader.setBuffer(e,s);let i=this.reader.cstring();return new w.CommandCompleteMessage(t,i)}parseCopyData(e,t,s){let i=s.slice(e,e+(t-4));return new w.CopyDataMessage(t,i)}parseCopyInMessage(e,t,s){return this.parseCopyMessage(e,t,s,"copyInResponse")}parseCopyOutMessage(e,t,s){return this.parseCopyMessage(e,t,s,"copyOutResponse")}parseCopyMessage(e,t,s,i){this.reader.setBuffer(e,s);let n=this.reader.byte()!==0,a=this.reader.int16(),o=new w.CopyResponse(t,i,n,a);for(let u=0;u<a;u++)o.columnTypes[u]=this.reader.int16();return o}parseNotificationMessage(e,t,s){this.reader.setBuffer(e,s);let i=this.reader.int32(),n=this.reader.cstring(),a=this.reader.cstring();return new w.NotificationResponseMessage(t,i,n,a)}parseRowDescriptionMessage(e,t,s){this.reader.setBuffer(e,s);let i=this.reader.int16(),n=new w.RowDescriptionMessage(t,i);for(let a=0;a<i;a++)n.fields[a]=this.parseField();return n}parseField(){let e=this.reader.cstring(),t=this.reader.int32(),s=this.reader.int16(),i=this.reader.int32(),n=this.reader.int16(),a=this.reader.int32(),o=this.reader.int16()===0?"text":"binary";return new w.Field(e,t,s,i,n,a,o)}parseParameterDescriptionMessage(e,t,s){this.reader.setBuffer(e,s);let i=this.reader.int16(),n=new w.ParameterDescriptionMessage(t,i);for(let a=0;a<i;a++)n.dataTypeIDs[a]=this.reader.int32();return n}parseDataRowMessage(e,t,s){this.reader.setBuffer(e,s);let i=this.reader.int16(),n=new Array(i);for(let a=0;a<i;a++){let o=this.reader.int32();n[a]=o===-1?null:this.reader.string(o)}return new w.DataRowMessage(t,n)}parseParameterStatusMessage(e,t,s){this.reader.setBuffer(e,s);let i=this.reader.cstring(),n=this.reader.cstring();return new w.ParameterStatusMessage(t,i,n)}parseBackendKeyData(e,t,s){this.reader.setBuffer(e,s);let i=this.reader.int32(),n=this.reader.int32();return new w.BackendKeyDataMessage(t,i,n)}parseAuthenticationResponse(e,t,s){this.reader.setBuffer(e,s);let i=this.reader.int32(),n={name:"authenticationOk",length:t};switch(i){case 0:break;case 3:n.length===8&&(n.name="authenticationCleartextPassword");break;case 5:if(n.length===12){n.name="authenticationMD5Password";let o=this.reader.bytes(4);return new w.AuthenticationMD5Password(t,o)}break;case 10:n.name="authenticationSASL",n.mechanisms=[];let a;do a=this.reader.cstring(),a&&n.mechanisms.push(a);while(a);break;case 11:n.name="authenticationSASLContinue",n.data=this.reader.string(t-8);break;case 12:n.name="authenticationSASLFinal",n.data=this.reader.string(t-8);break;default:throw new Error("Unknown authenticationOk message type "+i)}return n}parseErrorMessage(e,t,s,i){this.reader.setBuffer(e,s);let n={},a=this.reader.string(1);for(;a!=="\0";)n[a]=this.reader.cstring(),a=this.reader.string(1);let o=n.M,u=i==="notice"?new w.NoticeMessage(t,o):new w.DatabaseError(o,t,i);return u.severity=n.S,u.code=n.C,u.detail=n.D,u.hint=n.H,u.position=n.P,u.internalPosition=n.p,u.internalQuery=n.q,u.where=n.W,u.schema=n.s,u.table=n.t,u.column=n.c,u.dataType=n.d,u.constraint=n.n,u.file=n.F,u.line=n.L,u.routine=n.R,u}};Q.Parser=ft});var pt=p(M=>{"use strict";Object.defineProperty(M,"__esModule",{value:!0});M.DatabaseError=M.serialize=M.parse=void 0;var bn=ot();Object.defineProperty(M,"DatabaseError",{enumerable:!0,get:function(){return bn.DatabaseError}});var Tn=Or();Object.defineProperty(M,"serialize",{enumerable:!0,get:function(){return Tn.serialize}});var Cn=Nr();function Pn(r,e){let t=new Cn.Parser;return r.on("data",s=>t.parse(s,e)),new Promise(s=>r.on("end",()=>s()))}M.parse=Pn});var Fr={};Mt(Fr,{default:()=>xn});var xn,Ur=bs(()=>{xn={}});var jr=p((Za,mt)=>{mt.exports.getStream=function(e){let t=require("net");if(typeof t.Socket=="function")return new t.Socket;{let{CloudflareSocket:s}=(Ur(),Dt(Fr));return new s(e)}};mt.exports.getSecureStream=function(e){var t=require("tls");return t.connect?t.connect(e):(e.socket.startTls(e),e.socket)}});var vt=p((eo,Gr)=>{"use strict";var Xa=require("net"),In=require("events").EventEmitter,{parse:Mn,serialize:_}=pt(),{getStream:An,getSecureStream:Rn}=jr(),Dn=_.flush(),kn=_.sync(),qn=_.end(),yt=class extends In{constructor(e){super(),e=e||{},this.stream=e.stream||An(e.ssl),typeof this.stream=="function"&&(this.stream=this.stream(e)),this._keepAlive=e.keepAlive,this._keepAliveInitialDelayMillis=e.keepAliveInitialDelayMillis,this.lastBuffer=!1,this.parsedStatements={},this.ssl=e.ssl||!1,this._ending=!1,this._emitMessage=!1;var t=this;this.on("newListener",function(s){s==="message"&&(t._emitMessage=!0)})}connect(e,t){var s=this;this._connecting=!0,this.stream.setNoDelay(!0),this.stream.connect(e,t),this.stream.once("connect",function(){s._keepAlive&&s.stream.setKeepAlive(!0,s._keepAliveInitialDelayMillis),s.emit("connect")});let i=function(n){s._ending&&(n.code==="ECONNRESET"||n.code==="EPIPE")||s.emit("error",n)};if(this.stream.on("error",i),this.stream.on("close",function(){s.emit("end")}),!this.ssl)return this.attachListeners(this.stream);this.stream.once("data",function(n){var a=n.toString("utf8");switch(a){case"S":break;case"N":return s.stream.end(),s.emit("error",new Error("The server does not support SSL connections"));default:return s.stream.end(),s.emit("error",new Error("There was an error establishing an SSL connection"))}let o={socket:s.stream};s.ssl!==!0&&(Object.assign(o,s.ssl),"key"in s.ssl&&(o.key=s.ssl.key));var u=require("net");u.isIP&&u.isIP(t)===0&&(o.servername=t);try{s.stream=Rn(o)}catch(c){return s.emit("error",c)}s.attachListeners(s.stream),s.stream.on("error",i),s.emit("sslconnect")})}attachListeners(e){Mn(e,t=>{var s=t.name==="error"?"errorMessage":t.name;this._emitMessage&&this.emit("message",t),this.emit(s,t)})}requestSsl(){this.stream.write(_.requestSsl())}startup(e){this.stream.write(_.startup(e))}cancel(e,t){this._send(_.cancel(e,t))}password(e){this._send(_.password(e))}sendSASLInitialResponseMessage(e,t){this._send(_.sendSASLInitialResponseMessage(e,t))}sendSCRAMClientFinalMessage(e){this._send(_.sendSCRAMClientFinalMessage(e))}_send(e){return this.stream.writable?this.stream.write(e):!1}query(e){this._send(_.query(e))}parse(e){this._send(_.parse(e))}bind(e){this._send(_.bind(e))}execute(e){this._send(_.execute(e))}flush(){this.stream.writable&&this.stream.write(Dn)}sync(){this._ending=!0,this._send(kn)}ref(){this.stream.ref()}unref(){this.stream.unref()}end(){if(this._ending=!0,!this._connecting||!this.stream.writable){this.stream.end();return}return this.stream.write(qn,()=>{this.stream.end()})}close(e){this._send(_.close(e))}describe(e){this._send(_.describe(e))}sendCopyFromChunk(e){this._send(_.copyData(e))}endCopyFrom(){this._send(_.copyDone())}sendCopyFail(e){this._send(_.copyFail(e))}};Gr.exports=yt});var Kr=p((to,Wr)=>{"use strict";var{Transform:On}=require("stream"),{StringDecoder:Ln}=require("string_decoder"),A=Symbol("last"),le=Symbol("decoder");function Bn(r,e,t){let s;if(this.overflow){if(s=this[le].write(r).split(this.matcher),s.length===1)return t();s.shift(),this.overflow=!1}else this[A]+=this[le].write(r),s=this[A].split(this.matcher);this[A]=s.pop();for(let i=0;i<s.length;i++)try{$r(this,this.mapper(s[i]))}catch(n){return t(n)}if(this.overflow=this[A].length>this.maxLength,this.overflow&&!this.skipOverflow){t(new Error("maximum buffer reached"));return}t()}function Qn(r){if(this[A]+=this[le].end(),this[A])try{$r(this,this.mapper(this[A]))}catch(e){return r(e)}r()}function $r(r,e){e!==void 0&&r.push(e)}function Hr(r){return r}function Nn(r,e,t){switch(r=r||/\r?\n/,e=e||Hr,t=t||{},arguments.length){case 1:typeof r=="function"?(e=r,r=/\r?\n/):typeof r=="object"&&!(r instanceof RegExp)&&!r[Symbol.split]&&(t=r,r=/\r?\n/);break;case 2:typeof r=="function"?(t=e,e=r,r=/\r?\n/):typeof e=="object"&&(t=e,e=Hr)}t=Object.assign({},t),t.autoDestroy=!0,t.transform=Bn,t.flush=Qn,t.readableObjectMode=!0;let s=new On(t);return s[A]="",s[le]=new Ln("utf8"),s.matcher=r,s.mapper=e,s.maxLength=t.maxLength,s.skipOverflow=t.skipOverflow||!1,s.overflow=!1,s._destroy=function(i,n){this._writableState.errorEmitted=!1,n(i)},s}Wr.exports=Nn});var Yr=p((ro,I)=>{"use strict";var Vr=require("path"),Fn=require("stream").Stream,Un=Kr(),zr=require("util"),jn=5432,de=process.platform==="win32",X=process.stderr,Gn=56,Hn=7,$n=61440,Wn=32768;function Kn(r){return(r&$n)==Wn}var N=["host","port","database","user","password"],wt=N.length,Vn=N[wt-1];function gt(){var r=X instanceof Fn&&X.writable===!0;if(r){var e=Array.prototype.slice.call(arguments).concat(`
-`);X.write(zr.format.apply(zr,e))}}Object.defineProperty(I.exports,"isWin",{get:function(){return de},set:function(r){de=r}});I.exports.warnTo=function(r){var e=X;return X=r,e};I.exports.getFileName=function(r){var e=r||process.env,t=e.PGPASSFILE||(de?Vr.join(e.APPDATA||"./","postgresql","pgpass.conf"):Vr.join(e.HOME||"./",".pgpass"));return t};I.exports.usePgPass=function(r,e){return Object.prototype.hasOwnProperty.call(process.env,"PGPASSWORD")?!1:de?!0:(e=e||"<unkn>",Kn(r.mode)?r.mode&(Gn|Hn)?(gt('WARNING: password file "%s" has group or world access; permissions should be u=rw (0600) or less',e),!1):!0:(gt('WARNING: password file "%s" is not a plain file',e),!1))};var zn=I.exports.match=function(r,e){return N.slice(0,-1).reduce(function(t,s,i){return i==1&&Number(r[s]||jn)===Number(e[s])?t&&!0:t&&(e[s]==="*"||e[s]===r[s])},!0)};I.exports.getPassword=function(r,e,t){var s,i=e.pipe(Un());function n(u){var c=Yn(u);c&&Jn(c)&&zn(r,c)&&(s=c[Vn],i.end())}var a=function(){e.destroy(),t(s)},o=function(u){e.destroy(),gt("WARNING: error on reading file: %s",u),t(void 0)};e.on("error",o),i.on("data",n).on("end",a).on("error",o)};var Yn=I.exports.parseLine=function(r){if(r.length<11||r.match(/^\s+#/))return null;for(var e="",t="",s=0,i=0,n=0,a={},o=!1,u=function(l,f,m){var C=r.substring(f,m);Object.hasOwnProperty.call(process.env,"PGPASS_NO_DEESCAPE")||(C=C.replace(/\\([:\\])/g,"$1")),a[N[l]]=C},c=0;c<r.length-1;c+=1){if(e=r.charAt(c+1),t=r.charAt(c),o=s==wt-1,o){u(s,i);break}c>=0&&e==":"&&t!=="\\"&&(u(s,i,c+1),i=c+2,s+=1)}return a=Object.keys(a).length===wt?a:null,a},Jn=I.exports.isValidEntry=function(r){for(var e={0:function(a){return a.length>0},1:function(a){return a==="*"?!0:(a=Number(a),isFinite(a)&&a>0&&a<9007199254740992&&Math.floor(a)===a)},2:function(a){return a.length>0},3:function(a){return a.length>0},4:function(a){return a.length>0}},t=0;t<N.length;t+=1){var s=e[t],i=r[N[t]]||"",n=s(i);if(!n)return!1}return!0}});var Zr=p((io,_t)=>{"use strict";var so=require("path"),Jr=require("fs"),fe=Yr();_t.exports=function(r,e){var t=fe.getFileName();Jr.stat(t,function(s,i){if(s||!fe.usePgPass(i,t))return e(void 0);var n=Jr.createReadStream(t);fe.getPassword(r,n,e)})};_t.exports.warnTo=fe.warnTo});var rs=p((no,ts)=>{"use strict";var Zn=require("events").EventEmitter,Xr=J(),St=gr(),Xn=Ue(),ea=He(),es=Dr(),ta=Y(),ra=vt(),sa=Fe(),pe=class extends Zn{constructor(e){super(),this.connectionParameters=new ea(e),this.user=this.connectionParameters.user,this.database=this.connectionParameters.database,this.port=this.connectionParameters.port,this.host=this.connectionParameters.host,Object.defineProperty(this,"password",{configurable:!0,enumerable:!1,writable:!0,value:this.connectionParameters.password}),this.replication=this.connectionParameters.replication;var t=e||{};this._Promise=t.Promise||global.Promise,this._types=new Xn(t.types),this._ending=!1,this._ended=!1,this._connecting=!1,this._connected=!1,this._connectionError=!1,this._queryable=!0,this.connection=t.connection||new ra({stream:t.stream,ssl:this.connectionParameters.ssl,keepAlive:t.keepAlive||!1,keepAliveInitialDelayMillis:t.keepAliveInitialDelayMillis||0,encoding:this.connectionParameters.client_encoding||"utf8"}),this.queryQueue=[],this.binary=t.binary||ta.binary,this.processID=null,this.secretKey=null,this.ssl=this.connectionParameters.ssl||!1,this.ssl&&this.ssl.key&&Object.defineProperty(this.ssl,"key",{enumerable:!1}),this._connectionTimeoutMillis=t.connectionTimeoutMillis||0}_errorAllQueries(e){let t=s=>{process.nextTick(()=>{s.handleError(e,this.connection)})};this.activeQuery&&(t(this.activeQuery),this.activeQuery=null),this.queryQueue.forEach(t),this.queryQueue.length=0}_connect(e){var t=this,s=this.connection;if(this._connectionCallback=e,this._connecting||this._connected){let i=new Error("Client has already been connected. You cannot reuse a client.");process.nextTick(()=>{e(i)});return}this._connecting=!0,this.connectionTimeoutHandle,this._connectionTimeoutMillis>0&&(this.connectionTimeoutHandle=setTimeout(()=>{s._ending=!0,s.stream.destroy(new Error("timeout expired"))},this._connectionTimeoutMillis)),this.host&&this.host.indexOf("/")===0?s.connect(this.host+"/.s.PGSQL."+this.port):s.connect(this.port,this.host),s.on("connect",function(){t.ssl?s.requestSsl():s.startup(t.getStartupConf())}),s.on("sslconnect",function(){s.startup(t.getStartupConf())}),this._attachListeners(s),s.once("end",()=>{let i=this._ending?new Error("Connection terminated"):new Error("Connection terminated unexpectedly");clearTimeout(this.connectionTimeoutHandle),this._errorAllQueries(i),this._ended=!0,this._ending||(this._connecting&&!this._connectionError?this._connectionCallback?this._connectionCallback(i):this._handleErrorEvent(i):this._connectionError||this._handleErrorEvent(i)),process.nextTick(()=>{this.emit("end")})})}connect(e){if(e){this._connect(e);return}return new this._Promise((t,s)=>{this._connect(i=>{i?s(i):t()})})}_attachListeners(e){e.on("authenticationCleartextPassword",this._handleAuthCleartextPassword.bind(this)),e.on("authenticationMD5Password",this._handleAuthMD5Password.bind(this)),e.on("authenticationSASL",this._handleAuthSASL.bind(this)),e.on("authenticationSASLContinue",this._handleAuthSASLContinue.bind(this)),e.on("authenticationSASLFinal",this._handleAuthSASLFinal.bind(this)),e.on("backendKeyData",this._handleBackendKeyData.bind(this)),e.on("error",this._handleErrorEvent.bind(this)),e.on("errorMessage",this._handleErrorMessage.bind(this)),e.on("readyForQuery",this._handleReadyForQuery.bind(this)),e.on("notice",this._handleNotice.bind(this)),e.on("rowDescription",this._handleRowDescription.bind(this)),e.on("dataRow",this._handleDataRow.bind(this)),e.on("portalSuspended",this._handlePortalSuspended.bind(this)),e.on("emptyQuery",this._handleEmptyQuery.bind(this)),e.on("commandComplete",this._handleCommandComplete.bind(this)),e.on("parseComplete",this._handleParseComplete.bind(this)),e.on("copyInResponse",this._handleCopyInResponse.bind(this)),e.on("copyData",this._handleCopyData.bind(this)),e.on("notification",this._handleNotification.bind(this))}_checkPgPass(e){let t=this.connection;if(typeof this.password=="function")this._Promise.resolve().then(()=>this.password()).then(s=>{if(s!==void 0){if(typeof s!="string"){t.emit("error",new TypeError("Password must be a string"));return}this.connectionParameters.password=this.password=s}else this.connectionParameters.password=this.password=null;e()}).catch(s=>{t.emit("error",s)});else if(this.password!==null)e();else try{Zr()(this.connectionParameters,i=>{i!==void 0&&(this.connectionParameters.password=this.password=i),e()})}catch(s){this.emit("error",s)}}_handleAuthCleartextPassword(e){this._checkPgPass(()=>{this.connection.password(this.password)})}_handleAuthMD5Password(e){this._checkPgPass(async()=>{try{let t=await sa.postgresMd5PasswordHash(this.user,this.password,e.salt);this.connection.password(t)}catch(t){this.emit("error",t)}})}_handleAuthSASL(e){this._checkPgPass(()=>{try{this.saslSession=St.startSession(e.mechanisms),this.connection.sendSASLInitialResponseMessage(this.saslSession.mechanism,this.saslSession.response)}catch(t){this.connection.emit("error",t)}})}async _handleAuthSASLContinue(e){try{await St.continueSession(this.saslSession,this.password,e.data),this.connection.sendSCRAMClientFinalMessage(this.saslSession.response)}catch(t){this.connection.emit("error",t)}}_handleAuthSASLFinal(e){try{St.finalizeSession(this.saslSession,e.data),this.saslSession=null}catch(t){this.connection.emit("error",t)}}_handleBackendKeyData(e){this.processID=e.processID,this.secretKey=e.secretKey}_handleReadyForQuery(e){this._connecting&&(this._connecting=!1,this._connected=!0,clearTimeout(this.connectionTimeoutHandle),this._connectionCallback&&(this._connectionCallback(null,this),this._connectionCallback=null),this.emit("connect"));let{activeQuery:t}=this;this.activeQuery=null,this.readyForQuery=!0,t&&t.handleReadyForQuery(this.connection),this._pulseQueryQueue()}_handleErrorWhileConnecting(e){if(!this._connectionError){if(this._connectionError=!0,clearTimeout(this.connectionTimeoutHandle),this._connectionCallback)return this._connectionCallback(e);this.emit("error",e)}}_handleErrorEvent(e){if(this._connecting)return this._handleErrorWhileConnecting(e);this._queryable=!1,this._errorAllQueries(e),this.emit("error",e)}_handleErrorMessage(e){if(this._connecting)return this._handleErrorWhileConnecting(e);let t=this.activeQuery;if(!t){this._handleErrorEvent(e);return}this.activeQuery=null,t.handleError(e,this.connection)}_handleRowDescription(e){this.activeQuery.handleRowDescription(e)}_handleDataRow(e){this.activeQuery.handleDataRow(e)}_handlePortalSuspended(e){this.activeQuery.handlePortalSuspended(this.connection)}_handleEmptyQuery(e){this.activeQuery.handleEmptyQuery(this.connection)}_handleCommandComplete(e){this.activeQuery.handleCommandComplete(e,this.connection)}_handleParseComplete(e){this.activeQuery.name&&(this.connection.parsedStatements[this.activeQuery.name]=this.activeQuery.text)}_handleCopyInResponse(e){this.activeQuery.handleCopyInResponse(this.connection)}_handleCopyData(e){this.activeQuery.handleCopyData(e,this.connection)}_handleNotification(e){this.emit("notification",e)}_handleNotice(e){this.emit("notice",e)}getStartupConf(){var e=this.connectionParameters,t={user:e.user,database:e.database},s=e.application_name||e.fallback_application_name;return s&&(t.application_name=s),e.replication&&(t.replication=""+e.replication),e.statement_timeout&&(t.statement_timeout=String(parseInt(e.statement_timeout,10))),e.lock_timeout&&(t.lock_timeout=String(parseInt(e.lock_timeout,10))),e.idle_in_transaction_session_timeout&&(t.idle_in_transaction_session_timeout=String(parseInt(e.idle_in_transaction_session_timeout,10))),e.options&&(t.options=e.options),t}cancel(e,t){if(e.activeQuery===t){var s=this.connection;this.host&&this.host.indexOf("/")===0?s.connect(this.host+"/.s.PGSQL."+this.port):s.connect(this.port,this.host),s.on("connect",function(){s.cancel(e.processID,e.secretKey)})}else e.queryQueue.indexOf(t)!==-1&&e.queryQueue.splice(e.queryQueue.indexOf(t),1)}setTypeParser(e,t,s){return this._types.setTypeParser(e,t,s)}getTypeParser(e,t){return this._types.getTypeParser(e,t)}escapeIdentifier(e){return Xr.escapeIdentifier(e)}escapeLiteral(e){return Xr.escapeLiteral(e)}_pulseQueryQueue(){if(this.readyForQuery===!0)if(this.activeQuery=this.queryQueue.shift(),this.activeQuery){this.readyForQuery=!1,this.hasExecuted=!0;let e=this.activeQuery.submit(this.connection);e&&process.nextTick(()=>{this.activeQuery.handleError(e,this.connection),this.readyForQuery=!0,this._pulseQueryQueue()})}else this.hasExecuted&&(this.activeQuery=null,this.emit("drain"))}query(e,t,s){var i,n,a,o,u;if(e==null)throw new TypeError("Client was passed a null or undefined query");return typeof e.submit=="function"?(a=e.query_timeout||this.connectionParameters.query_timeout,n=i=e,typeof t=="function"&&(i.callback=i.callback||t)):(a=this.connectionParameters.query_timeout,i=new es(e,t,s),i.callback||(n=new this._Promise((c,l)=>{i.callback=(f,m)=>f?l(f):c(m)}).catch(c=>{throw Error.captureStackTrace(c),c}))),a&&(u=i.callback,o=setTimeout(()=>{var c=new Error("Query read timeout");process.nextTick(()=>{i.handleError(c,this.connection)}),u(c),i.callback=()=>{};var l=this.queryQueue.indexOf(i);l>-1&&this.queryQueue.splice(l,1),this._pulseQueryQueue()},a),i.callback=(c,l)=>{clearTimeout(o),u(c,l)}),this.binary&&!i.binary&&(i.binary=!0),i._result&&!i._result._types&&(i._result._types=this._types),this._queryable?this._ending?(process.nextTick(()=>{i.handleError(new Error("Client was closed and is not queryable"),this.connection)}),n):(this.queryQueue.push(i),this._pulseQueryQueue(),n):(process.nextTick(()=>{i.handleError(new Error("Client has encountered a connection error and is not queryable"),this.connection)}),n)}ref(){this.connection.ref()}unref(){this.connection.unref()}end(e){if(this._ending=!0,!this.connection._connecting||this._ended)if(e)e();else return this._Promise.resolve();if(this.activeQuery||!this._queryable?this.connection.stream.destroy():this.connection.end(),e)this.connection.once("end",e);else return new this._Promise(t=>{this.connection.once("end",t)})}};pe.Query=es;ts.exports=pe});var as=p((ao,ns)=>{"use strict";var ia=require("events").EventEmitter,ss=function(){},is=(r,e)=>{let t=r.findIndex(e);return t===-1?void 0:r.splice(t,1)[0]},Et=class{constructor(e,t,s){this.client=e,this.idleListener=t,this.timeoutId=s}},F=class{constructor(e){this.callback=e}};function na(){throw new Error("Release called on client which has already been released to the pool.")}function me(r,e){if(e)return{callback:e,result:void 0};let t,s,i=function(a,o){a?t(a):s(o)},n=new r(function(a,o){s=a,t=o}).catch(a=>{throw Error.captureStackTrace(a),a});return{callback:i,result:n}}function aa(r,e){return function t(s){s.client=e,e.removeListener("error",t),e.on("error",()=>{r.log("additional client error after disconnection due to error",s)}),r._remove(e),r.emit("error",s,e)}}var bt=class extends ia{constructor(e,t){super(),this.options=Object.assign({},e),e!=null&&"password"in e&&Object.defineProperty(this.options,"password",{configurable:!0,enumerable:!1,writable:!0,value:e.password}),e!=null&&e.ssl&&e.ssl.key&&Object.defineProperty(this.options.ssl,"key",{enumerable:!1}),this.options.max=this.options.max||this.options.poolSize||10,this.options.maxUses=this.options.maxUses||1/0,this.options.allowExitOnIdle=this.options.allowExitOnIdle||!1,this.options.maxLifetimeSeconds=this.options.maxLifetimeSeconds||0,this.log=this.options.log||function(){},this.Client=this.options.Client||t||Tt().Client,this.Promise=this.options.Promise||global.Promise,typeof this.options.idleTimeoutMillis>"u"&&(this.options.idleTimeoutMillis=1e4),this._clients=[],this._idle=[],this._expired=new WeakSet,this._pendingQueue=[],this._endCallback=void 0,this.ending=!1,this.ended=!1}_isFull(){return this._clients.length>=this.options.max}_pulseQueue(){if(this.log("pulse queue"),this.ended){this.log("pulse queue ended");return}if(this.ending){this.log("pulse queue on ending"),this._idle.length&&this._idle.slice().map(t=>{this._remove(t.client)}),this._clients.length||(this.ended=!0,this._endCallback());return}if(!this._pendingQueue.length){this.log("no queued requests");return}if(!this._idle.length&&this._isFull())return;let e=this._pendingQueue.shift();if(this._idle.length){let t=this._idle.pop();clearTimeout(t.timeoutId);let s=t.client;s.ref&&s.ref();let i=t.idleListener;return this._acquireClient(s,e,i,!1)}if(!this._isFull())return this.newClient(e);throw new Error("unexpected condition")}_remove(e){let t=is(this._idle,s=>s.client===e);t!==void 0&&clearTimeout(t.timeoutId),this._clients=this._clients.filter(s=>s!==e),e.end(),this.emit("remove",e)}connect(e){if(this.ending){let i=new Error("Cannot use a pool after calling end on the pool");return e?e(i):this.Promise.reject(i)}let t=me(this.Promise,e),s=t.result;if(this._isFull()||this._idle.length){if(this._idle.length&&process.nextTick(()=>this._pulseQueue()),!this.options.connectionTimeoutMillis)return this._pendingQueue.push(new F(t.callback)),s;let i=(o,u,c)=>{clearTimeout(a),t.callback(o,u,c)},n=new F(i),a=setTimeout(()=>{is(this._pendingQueue,o=>o.callback===i),n.timedOut=!0,t.callback(new Error("timeout exceeded when trying to connect"))},this.options.connectionTimeoutMillis);return this._pendingQueue.push(n),s}return this.newClient(new F(t.callback)),s}newClient(e){let t=new this.Client(this.options);this._clients.push(t);let s=aa(this,t);this.log("checking client timeout");let i,n=!1;this.options.connectionTimeoutMillis&&(i=setTimeout(()=>{this.log("ending client due to timeout"),n=!0,t.connection?t.connection.stream.destroy():t.end()},this.options.connectionTimeoutMillis)),this.log("connecting new client"),t.connect(a=>{if(i&&clearTimeout(i),t.on("error",s),a)this.log("client failed to connect",a),this._clients=this._clients.filter(o=>o!==t),n&&(a.message="Connection terminated due to connection timeout"),this._pulseQueue(),e.timedOut||e.callback(a,void 0,ss);else{if(this.log("new client connected"),this.options.maxLifetimeSeconds!==0){let o=setTimeout(()=>{this.log("ending client due to expired lifetime"),this._expired.add(t),this._idle.findIndex(c=>c.client===t)!==-1&&this._acquireClient(t,new F((c,l,f)=>f()),s,!1)},this.options.maxLifetimeSeconds*1e3);o.unref(),t.once("end",()=>clearTimeout(o))}return this._acquireClient(t,e,s,!0)}})}_acquireClient(e,t,s,i){i&&this.emit("connect",e),this.emit("acquire",e),e.release=this._releaseOnce(e,s),e.removeListener("error",s),t.timedOut?i&&this.options.verify?this.options.verify(e,e.release):e.release():i&&this.options.verify?this.options.verify(e,n=>{if(n)return e.release(n),t.callback(n,void 0,ss);t.callback(void 0,e,e.release)}):t.callback(void 0,e,e.release)}_releaseOnce(e,t){let s=!1;return i=>{s&&na(),s=!0,this._release(e,t,i)}}_release(e,t,s){if(e.on("error",t),e._poolUseCount=(e._poolUseCount||0)+1,this.emit("release",s,e),s||this.ending||!e._queryable||e._ending||e._poolUseCount>=this.options.maxUses){e._poolUseCount>=this.options.maxUses&&this.log("remove expended client"),this._remove(e),this._pulseQueue();return}if(this._expired.has(e)){this.log("remove expired client"),this._expired.delete(e),this._remove(e),this._pulseQueue();return}let n;this.options.idleTimeoutMillis&&(n=setTimeout(()=>{this.log("remove idle client"),this._remove(e)},this.options.idleTimeoutMillis),this.options.allowExitOnIdle&&n.unref()),this.options.allowExitOnIdle&&e.unref(),this._idle.push(new Et(e,t,n)),this._pulseQueue()}query(e,t,s){if(typeof e=="function"){let n=me(this.Promise,e);return setImmediate(function(){return n.callback(new Error("Passing a function as the first parameter to pool.query is not supported"))}),n.result}typeof t=="function"&&(s=t,t=void 0);let i=me(this.Promise,s);return s=i.callback,this.connect((n,a)=>{if(n)return s(n);let o=!1,u=c=>{o||(o=!0,a.release(c),s(c))};a.once("error",u),this.log("dispatching query");try{a.query(e,t,(c,l)=>{if(this.log("query dispatched"),a.removeListener("error",u),!o)return o=!0,a.release(c),c?s(c):s(void 0,l)})}catch(c){return a.release(c),s(c)}}),i.result}end(e){if(this.log("ending"),this.ending){let s=new Error("Called end on pool more than once");return e?e(s):this.Promise.reject(s)}this.ending=!0;let t=me(this.Promise,e);return this._endCallback=t.callback,this._pulseQueue(),t.result}get waitingCount(){return this._pendingQueue.length}get idleCount(){return this._idle.length}get expiredCount(){return this._clients.reduce((e,t)=>e+(this._expired.has(t)?1:0),0)}get totalCount(){return this._clients.length}};ns.exports=bt});var cs=p((oo,us)=>{"use strict";var os=require("events").EventEmitter,oa=require("util"),Ct=J(),U=us.exports=function(r,e,t){os.call(this),r=Ct.normalizeQueryConfig(r,e,t),this.text=r.text,this.values=r.values,this.name=r.name,this.callback=r.callback,this.state="new",this._arrayMode=r.rowMode==="array",this._emitRowEvents=!1,this.on("newListener",function(s){s==="row"&&(this._emitRowEvents=!0)}.bind(this))};oa.inherits(U,os);var ua={sqlState:"code",statementPosition:"position",messagePrimary:"message",context:"where",schemaName:"schema",tableName:"table",columnName:"column",dataTypeName:"dataType",constraintName:"constraint",sourceFile:"file",sourceLine:"line",sourceFunction:"routine"};U.prototype.handleError=function(r){var e=this.native.pq.resultErrorFields();if(e)for(var t in e){var s=ua[t]||t;r[s]=e[t]}this.callback?this.callback(r):this.emit("error",r),this.state="error"};U.prototype.then=function(r,e){return this._getPromise().then(r,e)};U.prototype.catch=function(r){return this._getPromise().catch(r)};U.prototype._getPromise=function(){return this._promise?this._promise:(this._promise=new Promise(function(r,e){this._once("end",r),this._once("error",e)}.bind(this)),this._promise)};U.prototype.submit=function(r){this.state="running";var e=this;this.native=r.native,r.native.arrayMode=this._arrayMode;var t=function(n,a,o){if(r.native.arrayMode=!1,setImmediate(function(){e.emit("_done")}),n)return e.handleError(n);e._emitRowEvents&&(o.length>1?a.forEach((u,c)=>{u.forEach(l=>{e.emit("row",l,o[c])})}):a.forEach(function(u){e.emit("row",u,o)})),e.state="end",e.emit("end",o),e.callback&&e.callback(null,o)};if(process.domain&&(t=process.domain.bind(t)),this.name){this.name.length>63&&(console.error("Warning! Postgres only supports 63 characters for query names."),console.error("You supplied %s (%s)",this.name,this.name.length),console.error("This can cause conflicts and silent errors executing queries"));var s=(this.values||[]).map(Ct.prepareValue);if(r.namedQueries[this.name]){if(this.text&&r.namedQueries[this.name]!==this.text){let n=new Error(`Prepared statements must be unique - '${this.name}' was used for a different statement`);return t(n)}return r.native.execute(this.name,s,t)}return r.native.prepare(this.name,this.text,s.length,function(n){return n?t(n):(r.namedQueries[e.name]=e.text,e.native.execute(e.name,s,t))})}else if(this.values){if(!Array.isArray(this.values)){let n=new Error("Query values must be an array");return t(n)}var i=this.values.map(Ct.prepareValue);r.native.query(this.text,i,t)}else r.native.query(this.text,t)}});var ps=p((uo,fs)=>{"use strict";var hs;try{hs=require("pg-native")}catch(r){throw r}var ca=Ue(),ls=require("events").EventEmitter,ha=require("util"),la=He(),ds=cs(),T=fs.exports=function(r){ls.call(this),r=r||{},this._Promise=r.Promise||global.Promise,this._types=new ca(r.types),this.native=new hs({types:this._types}),this._queryQueue=[],this._ending=!1,this._connecting=!1,this._connected=!1,this._queryable=!0;var e=this.connectionParameters=new la(r);r.nativeConnectionString&&(e.nativeConnectionString=r.nativeConnectionString),this.user=e.user,Object.defineProperty(this,"password",{configurable:!0,enumerable:!1,writable:!0,value:e.password}),this.database=e.database,this.host=e.host,this.port=e.port,this.namedQueries={}};T.Query=ds;ha.inherits(T,ls);T.prototype._errorAllQueries=function(r){let e=t=>{process.nextTick(()=>{t.native=this.native,t.handleError(r)})};this._hasActiveQuery()&&(e(this._activeQuery),this._activeQuery=null),this._queryQueue.forEach(e),this._queryQueue.length=0};T.prototype._connect=function(r){var e=this;if(this._connecting){process.nextTick(()=>r(new Error("Client has already been connected. You cannot reuse a client.")));return}this._connecting=!0,this.connectionParameters.getLibpqConnectionString(function(t,s){if(e.connectionParameters.nativeConnectionString&&(s=e.connectionParameters.nativeConnectionString),t)return r(t);e.native.connect(s,function(i){if(i)return e.native.end(),r(i);e._connected=!0,e.native.on("error",function(n){e._queryable=!1,e._errorAllQueries(n),e.emit("error",n)}),e.native.on("notification",function(n){e.emit("notification",{channel:n.relname,payload:n.extra})}),e.emit("connect"),e._pulseQueryQueue(!0),r()})})};T.prototype.connect=function(r){if(r){this._connect(r);return}return new this._Promise((e,t)=>{this._connect(s=>{s?t(s):e()})})};T.prototype.query=function(r,e,t){var s,i,n,a,o;if(r==null)throw new TypeError("Client was passed a null or undefined query");if(typeof r.submit=="function")n=r.query_timeout||this.connectionParameters.query_timeout,i=s=r,typeof e=="function"&&(r.callback=e);else if(n=this.connectionParameters.query_timeout,s=new ds(r,e,t),!s.callback){let u,c;i=new this._Promise((l,f)=>{u=l,c=f}).catch(l=>{throw Error.captureStackTrace(l),l}),s.callback=(l,f)=>l?c(l):u(f)}return n&&(o=s.callback,a=setTimeout(()=>{var u=new Error("Query read timeout");process.nextTick(()=>{s.handleError(u,this.connection)}),o(u),s.callback=()=>{};var c=this._queryQueue.indexOf(s);c>-1&&this._queryQueue.splice(c,1),this._pulseQueryQueue()},n),s.callback=(u,c)=>{clearTimeout(a),o(u,c)}),this._queryable?this._ending?(s.native=this.native,process.nextTick(()=>{s.handleError(new Error("Client was closed and is not queryable"))}),i):(this._queryQueue.push(s),this._pulseQueryQueue(),i):(s.native=this.native,process.nextTick(()=>{s.handleError(new Error("Client has encountered a connection error and is not queryable"))}),i)};T.prototype.end=function(r){var e=this;this._ending=!0,this._connected||this.once("connect",this.end.bind(this,r));var t;return r||(t=new this._Promise(function(s,i){r=n=>n?i(n):s()})),this.native.end(function(){e._errorAllQueries(new Error("Connection terminated")),process.nextTick(()=>{e.emit("end"),r&&r()})}),t};T.prototype._hasActiveQuery=function(){return this._activeQuery&&this._activeQuery.state!=="error"&&this._activeQuery.state!=="end"};T.prototype._pulseQueryQueue=function(r){if(this._connected&&!this._hasActiveQuery()){var e=this._queryQueue.shift();if(!e){r||this.emit("drain");return}this._activeQuery=e,e.submit(this);var t=this;e.once("_done",function(){t._pulseQueryQueue()})}};T.prototype.cancel=function(r){this._activeQuery===r?this.native.cancel(function(){}):this._queryQueue.indexOf(r)!==-1&&this._queryQueue.splice(this._queryQueue.indexOf(r),1)};T.prototype.ref=function(){};T.prototype.unref=function(){};T.prototype.setTypeParser=function(r,e,t){return this._types.setTypeParser(r,e,t)};T.prototype.getTypeParser=function(r,e){return this._types.getTypeParser(r,e)}});var Pt=p((co,ms)=>{"use strict";ms.exports=ps()});var Tt=p((lo,ee)=>{"use strict";var da=rs(),fa=Y(),pa=vt(),ma=as(),{DatabaseError:ya}=pt(),{escapeIdentifier:va,escapeLiteral:wa}=J(),ga=r=>class extends ma{constructor(t){super(t,r)}},xt=function(r){this.defaults=fa,this.Client=r,this.Query=this.Client.Query,this.Pool=ga(this.Client),this._pools=[],this.Connection=pa,this.types=z(),this.DatabaseError=ya,this.escapeIdentifier=va,this.escapeLiteral=wa};typeof process.env.NODE_PG_FORCE_NATIVE<"u"?ee.exports=new xt(Pt()):(ee.exports=new xt(da),Object.defineProperty(ee.exports,"native",{configurable:!0,enumerable:!1,get(){var r=null;try{r=new xt(Pt())}catch(e){if(e.code!=="MODULE_NOT_FOUND")throw e}return Object.defineProperty(ee.exports,"native",{value:r}),r}}))});var Ea={};Mt(Ea,{ErrorTreeItem:()=>D,ErrorsProvider:()=>Ee,activate:()=>_a,deactivate:()=>Sa});module.exports=Dt(Ea);var h=Rt(require("vscode")),It=Rt(Tt()),ye,ve,we,ge,_e,Se,g=h.workspace.getConfiguration("threatscope"),te=new It.Pool({user:g.get("DB.Login"),host:g.get("DB.Host"),database:g.get("DB.DataBase"),password:g.get("DB.Password"),port:g.get("DB.Port")});async function _a(r){h.commands.registerCommand("threatscope.activate",o=>h.window.showInformationMessage("Starting ThreatScope..."));let e,t="threatscope.changeSeverity",s=async(o,u)=>{await ys(o,u.replace(/_/g," ")),e=await G(h.window.activeTextEditor?.document.uri.fsPath),j(e),a.refresh(e)},i="threatscope.changeStatus",n=async(o,u)=>{await vs(o,u.replace(/_/g," ")),e=await G(h.window.activeTextEditor?.document.uri.fsPath),j(e),a.refresh(e)};r.subscriptions.push(h.commands.registerCommand(t,s)),r.subscriptions.push(h.commands.registerCommand(i,n));let a=new Ee;if(h.window.registerTreeDataProvider("errorsTree",a),h.window.createTreeView("errorsTree",{treeDataProvider:a}),h.window.activeTextEditor?.document.uri.fsPath!==void 0){try{e=await G(h.window.activeTextEditor?.document.uri.fsPath)}catch(o){let u=o.message;h.window.showErrorMessage(u)}h.window.showInformationMessage(`Found ${e.length} errors in: ${h.window.activeTextEditor?.document.uri.fsPath}`),j(e),a.refresh(e)}h.workspace.onDidChangeConfiguration(o=>{o.affectsConfiguration("threatscope")&&(g=h.workspace.getConfiguration("threatscope"),te=new It.Pool({user:g.get("DB.Login"),host:g.get("DB.Host"),database:g.get("DB.DataBase"),password:g.get("DB.Password"),port:g.get("DB.Port")}))}),h.window.onDidChangeActiveTextEditor(async o=>{if(h.window.activeTextEditor?.document.uri.fsPath===void 0)return;let u;try{u=await G(h.window.activeTextEditor?.document.uri.fsPath)}catch(c){let l=c.message;h.window.showErrorMessage(l)}h.window.showInformationMessage(`Found ${u.length} errors in: ${h.window.activeTextEditor?.document.uri.fsPath}`),j(u),a.refresh(u)})}function j(r){ye!==void 0&&ye.dispose(),ve!==void 0&&ve.dispose(),we!==void 0&&we.dispose(),ge!==void 0&&ge.dispose(),_e!==void 0&&_e.dispose(),Se!==void 0&&Se.dispose();let e=[],t=[],s=[],i=[],n=[],a=[];ye=h.window.createTextEditorDecorationType({backgroundColor:"rgba("+g.get("Colour.Status.NotConfirmed")+")",opacity:"100%",isWholeLine:!0}),ve=h.window.createTextEditorDecorationType({backgroundColor:"rgba("+g.get("Colour.Severity.LowSeverity")+")",opacity:"100%",isWholeLine:!0}),we=h.window.createTextEditorDecorationType({backgroundColor:"rgba("+g.get("Colour.Severity.MediumSeverity")+")",opacity:"100%",isWholeLine:!0}),ge=h.window.createTextEditorDecorationType({backgroundColor:"rgba("+g.get("Colour.Severity.HighSeverity")+")",opacity:"100%",isWholeLine:!0}),_e=h.window.createTextEditorDecorationType({backgroundColor:"rgba("+g.get("Colour.Severity.CriticalSeverity")+")",opacity:"100%",isWholeLine:!0}),Se=h.window.createTextEditorDecorationType({backgroundColor:"rgba("+g.get("Colour.Severity.UnknownSeverity")+")",opacity:"100%",isWholeLine:!0}),r.forEach(o=>{let u=new h.Position(Number(o.line)-1,0),c=new h.Range(u,u),l=new h.MarkdownString("Status: "+o.statusname+`  
-Severity: `+o.severityname+`
+"use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __esm = (fn, res) => function __init() {
+  return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
+};
+var __commonJS = (cb, mod) => function __require() {
+  return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+};
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-`+o.errorname+`  
-`+o.errordescription+`  
+// node_modules/postgres-array/index.js
+var require_postgres_array = __commonJS({
+  "node_modules/postgres-array/index.js"(exports2) {
+    "use strict";
+    exports2.parse = function(source, transform) {
+      return new ArrayParser(source, transform).parse();
+    };
+    var ArrayParser = class _ArrayParser {
+      constructor(source, transform) {
+        this.source = source;
+        this.transform = transform || identity;
+        this.position = 0;
+        this.entries = [];
+        this.recorded = [];
+        this.dimension = 0;
+      }
+      isEof() {
+        return this.position >= this.source.length;
+      }
+      nextCharacter() {
+        var character = this.source[this.position++];
+        if (character === "\\") {
+          return {
+            value: this.source[this.position++],
+            escaped: true
+          };
+        }
+        return {
+          value: character,
+          escaped: false
+        };
+      }
+      record(character) {
+        this.recorded.push(character);
+      }
+      newEntry(includeEmpty) {
+        var entry;
+        if (this.recorded.length > 0 || includeEmpty) {
+          entry = this.recorded.join("");
+          if (entry === "NULL" && !includeEmpty) {
+            entry = null;
+          }
+          if (entry !== null)
+            entry = this.transform(entry);
+          this.entries.push(entry);
+          this.recorded = [];
+        }
+      }
+      consumeDimensions() {
+        if (this.source[0] === "[") {
+          while (!this.isEof()) {
+            var char = this.nextCharacter();
+            if (char.value === "=")
+              break;
+          }
+        }
+      }
+      parse(nested) {
+        var character, parser, quote;
+        this.consumeDimensions();
+        while (!this.isEof()) {
+          character = this.nextCharacter();
+          if (character.value === "{" && !quote) {
+            this.dimension++;
+            if (this.dimension > 1) {
+              parser = new _ArrayParser(this.source.substr(this.position - 1), this.transform);
+              this.entries.push(parser.parse(true));
+              this.position += parser.position - 2;
+            }
+          } else if (character.value === "}" && !quote) {
+            this.dimension--;
+            if (!this.dimension) {
+              this.newEntry();
+              if (nested)
+                return this.entries;
+            }
+          } else if (character.value === '"' && !character.escaped) {
+            if (quote)
+              this.newEntry(true);
+            quote = !quote;
+          } else if (character.value === "," && !quote) {
+            this.newEntry();
+          } else {
+            this.record(character.value);
+          }
+        }
+        if (this.dimension !== 0) {
+          throw new Error("array dimension not balanced");
+        }
+        return this.entries;
+      }
+    };
+    function identity(value) {
+      return value;
+    }
+  }
+});
+
+// node_modules/pg-types/lib/arrayParser.js
+var require_arrayParser = __commonJS({
+  "node_modules/pg-types/lib/arrayParser.js"(exports2, module2) {
+    var array = require_postgres_array();
+    module2.exports = {
+      create: function(source, transform) {
+        return {
+          parse: function() {
+            return array.parse(source, transform);
+          }
+        };
+      }
+    };
+  }
+});
+
+// node_modules/postgres-date/index.js
+var require_postgres_date = __commonJS({
+  "node_modules/postgres-date/index.js"(exports2, module2) {
+    "use strict";
+    var DATE_TIME = /(\d{1,})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})(\.\d{1,})?.*?( BC)?$/;
+    var DATE = /^(\d{1,})-(\d{2})-(\d{2})( BC)?$/;
+    var TIME_ZONE = /([Z+-])(\d{2})?:?(\d{2})?:?(\d{2})?/;
+    var INFINITY = /^-?infinity$/;
+    module2.exports = function parseDate(isoDate) {
+      if (INFINITY.test(isoDate)) {
+        return Number(isoDate.replace("i", "I"));
+      }
+      var matches = DATE_TIME.exec(isoDate);
+      if (!matches) {
+        return getDate(isoDate) || null;
+      }
+      var isBC = !!matches[8];
+      var year = parseInt(matches[1], 10);
+      if (isBC) {
+        year = bcYearToNegativeYear(year);
+      }
+      var month = parseInt(matches[2], 10) - 1;
+      var day = matches[3];
+      var hour = parseInt(matches[4], 10);
+      var minute = parseInt(matches[5], 10);
+      var second = parseInt(matches[6], 10);
+      var ms = matches[7];
+      ms = ms ? 1e3 * parseFloat(ms) : 0;
+      var date;
+      var offset = timeZoneOffset(isoDate);
+      if (offset != null) {
+        date = new Date(Date.UTC(year, month, day, hour, minute, second, ms));
+        if (is0To99(year)) {
+          date.setUTCFullYear(year);
+        }
+        if (offset !== 0) {
+          date.setTime(date.getTime() - offset);
+        }
+      } else {
+        date = new Date(year, month, day, hour, minute, second, ms);
+        if (is0To99(year)) {
+          date.setFullYear(year);
+        }
+      }
+      return date;
+    };
+    function getDate(isoDate) {
+      var matches = DATE.exec(isoDate);
+      if (!matches) {
+        return;
+      }
+      var year = parseInt(matches[1], 10);
+      var isBC = !!matches[4];
+      if (isBC) {
+        year = bcYearToNegativeYear(year);
+      }
+      var month = parseInt(matches[2], 10) - 1;
+      var day = matches[3];
+      var date = new Date(year, month, day);
+      if (is0To99(year)) {
+        date.setFullYear(year);
+      }
+      return date;
+    }
+    function timeZoneOffset(isoDate) {
+      if (isoDate.endsWith("+00")) {
+        return 0;
+      }
+      var zone = TIME_ZONE.exec(isoDate.split(" ")[1]);
+      if (!zone)
+        return;
+      var type = zone[1];
+      if (type === "Z") {
+        return 0;
+      }
+      var sign = type === "-" ? -1 : 1;
+      var offset = parseInt(zone[2], 10) * 3600 + parseInt(zone[3] || 0, 10) * 60 + parseInt(zone[4] || 0, 10);
+      return offset * sign * 1e3;
+    }
+    function bcYearToNegativeYear(year) {
+      return -(year - 1);
+    }
+    function is0To99(num) {
+      return num >= 0 && num < 100;
+    }
+  }
+});
+
+// node_modules/xtend/mutable.js
+var require_mutable = __commonJS({
+  "node_modules/xtend/mutable.js"(exports2, module2) {
+    module2.exports = extend;
+    var hasOwnProperty = Object.prototype.hasOwnProperty;
+    function extend(target) {
+      for (var i = 1; i < arguments.length; i++) {
+        var source = arguments[i];
+        for (var key in source) {
+          if (hasOwnProperty.call(source, key)) {
+            target[key] = source[key];
+          }
+        }
+      }
+      return target;
+    }
+  }
+});
+
+// node_modules/postgres-interval/index.js
+var require_postgres_interval = __commonJS({
+  "node_modules/postgres-interval/index.js"(exports2, module2) {
+    "use strict";
+    var extend = require_mutable();
+    module2.exports = PostgresInterval;
+    function PostgresInterval(raw) {
+      if (!(this instanceof PostgresInterval)) {
+        return new PostgresInterval(raw);
+      }
+      extend(this, parse(raw));
+    }
+    var properties = ["seconds", "minutes", "hours", "days", "months", "years"];
+    PostgresInterval.prototype.toPostgres = function() {
+      var filtered = properties.filter(this.hasOwnProperty, this);
+      if (this.milliseconds && filtered.indexOf("seconds") < 0) {
+        filtered.push("seconds");
+      }
+      if (filtered.length === 0)
+        return "0";
+      return filtered.map(function(property) {
+        var value = this[property] || 0;
+        if (property === "seconds" && this.milliseconds) {
+          value = (value + this.milliseconds / 1e3).toFixed(6).replace(/\.?0+$/, "");
+        }
+        return value + " " + property;
+      }, this).join(" ");
+    };
+    var propertiesISOEquivalent = {
+      years: "Y",
+      months: "M",
+      days: "D",
+      hours: "H",
+      minutes: "M",
+      seconds: "S"
+    };
+    var dateProperties = ["years", "months", "days"];
+    var timeProperties = ["hours", "minutes", "seconds"];
+    PostgresInterval.prototype.toISOString = PostgresInterval.prototype.toISO = function() {
+      var datePart = dateProperties.map(buildProperty, this).join("");
+      var timePart = timeProperties.map(buildProperty, this).join("");
+      return "P" + datePart + "T" + timePart;
+      function buildProperty(property) {
+        var value = this[property] || 0;
+        if (property === "seconds" && this.milliseconds) {
+          value = (value + this.milliseconds / 1e3).toFixed(6).replace(/0+$/, "");
+        }
+        return value + propertiesISOEquivalent[property];
+      }
+    };
+    var NUMBER = "([+-]?\\d+)";
+    var YEAR = NUMBER + "\\s+years?";
+    var MONTH = NUMBER + "\\s+mons?";
+    var DAY = NUMBER + "\\s+days?";
+    var TIME = "([+-])?([\\d]*):(\\d\\d):(\\d\\d)\\.?(\\d{1,6})?";
+    var INTERVAL = new RegExp([YEAR, MONTH, DAY, TIME].map(function(regexString) {
+      return "(" + regexString + ")?";
+    }).join("\\s*"));
+    var positions = {
+      years: 2,
+      months: 4,
+      days: 6,
+      hours: 9,
+      minutes: 10,
+      seconds: 11,
+      milliseconds: 12
+    };
+    var negatives = ["hours", "minutes", "seconds", "milliseconds"];
+    function parseMilliseconds(fraction) {
+      var microseconds = fraction + "000000".slice(fraction.length);
+      return parseInt(microseconds, 10) / 1e3;
+    }
+    function parse(interval) {
+      if (!interval)
+        return {};
+      var matches = INTERVAL.exec(interval);
+      var isNegative = matches[8] === "-";
+      return Object.keys(positions).reduce(function(parsed, property) {
+        var position = positions[property];
+        var value = matches[position];
+        if (!value)
+          return parsed;
+        value = property === "milliseconds" ? parseMilliseconds(value) : parseInt(value, 10);
+        if (!value)
+          return parsed;
+        if (isNegative && ~negatives.indexOf(property)) {
+          value *= -1;
+        }
+        parsed[property] = value;
+        return parsed;
+      }, {});
+    }
+  }
+});
+
+// node_modules/postgres-bytea/index.js
+var require_postgres_bytea = __commonJS({
+  "node_modules/postgres-bytea/index.js"(exports2, module2) {
+    "use strict";
+    module2.exports = function parseBytea(input) {
+      if (/^\\x/.test(input)) {
+        return new Buffer(input.substr(2), "hex");
+      }
+      var output = "";
+      var i = 0;
+      while (i < input.length) {
+        if (input[i] !== "\\") {
+          output += input[i];
+          ++i;
+        } else {
+          if (/[0-7]{3}/.test(input.substr(i + 1, 3))) {
+            output += String.fromCharCode(parseInt(input.substr(i + 1, 3), 8));
+            i += 4;
+          } else {
+            var backslashes = 1;
+            while (i + backslashes < input.length && input[i + backslashes] === "\\") {
+              backslashes++;
+            }
+            for (var k = 0; k < Math.floor(backslashes / 2); ++k) {
+              output += "\\";
+            }
+            i += Math.floor(backslashes / 2) * 2;
+          }
+        }
+      }
+      return new Buffer(output, "binary");
+    };
+  }
+});
+
+// node_modules/pg-types/lib/textParsers.js
+var require_textParsers = __commonJS({
+  "node_modules/pg-types/lib/textParsers.js"(exports2, module2) {
+    var array = require_postgres_array();
+    var arrayParser = require_arrayParser();
+    var parseDate = require_postgres_date();
+    var parseInterval = require_postgres_interval();
+    var parseByteA = require_postgres_bytea();
+    function allowNull(fn) {
+      return function nullAllowed(value) {
+        if (value === null)
+          return value;
+        return fn(value);
+      };
+    }
+    function parseBool(value) {
+      if (value === null)
+        return value;
+      return value === "TRUE" || value === "t" || value === "true" || value === "y" || value === "yes" || value === "on" || value === "1";
+    }
+    function parseBoolArray(value) {
+      if (!value)
+        return null;
+      return array.parse(value, parseBool);
+    }
+    function parseBaseTenInt(string) {
+      return parseInt(string, 10);
+    }
+    function parseIntegerArray(value) {
+      if (!value)
+        return null;
+      return array.parse(value, allowNull(parseBaseTenInt));
+    }
+    function parseBigIntegerArray(value) {
+      if (!value)
+        return null;
+      return array.parse(value, allowNull(function(entry) {
+        return parseBigInteger(entry).trim();
+      }));
+    }
+    var parsePointArray = function(value) {
+      if (!value) {
+        return null;
+      }
+      var p = arrayParser.create(value, function(entry) {
+        if (entry !== null) {
+          entry = parsePoint(entry);
+        }
+        return entry;
+      });
+      return p.parse();
+    };
+    var parseFloatArray = function(value) {
+      if (!value) {
+        return null;
+      }
+      var p = arrayParser.create(value, function(entry) {
+        if (entry !== null) {
+          entry = parseFloat(entry);
+        }
+        return entry;
+      });
+      return p.parse();
+    };
+    var parseStringArray = function(value) {
+      if (!value) {
+        return null;
+      }
+      var p = arrayParser.create(value);
+      return p.parse();
+    };
+    var parseDateArray = function(value) {
+      if (!value) {
+        return null;
+      }
+      var p = arrayParser.create(value, function(entry) {
+        if (entry !== null) {
+          entry = parseDate(entry);
+        }
+        return entry;
+      });
+      return p.parse();
+    };
+    var parseIntervalArray = function(value) {
+      if (!value) {
+        return null;
+      }
+      var p = arrayParser.create(value, function(entry) {
+        if (entry !== null) {
+          entry = parseInterval(entry);
+        }
+        return entry;
+      });
+      return p.parse();
+    };
+    var parseByteAArray = function(value) {
+      if (!value) {
+        return null;
+      }
+      return array.parse(value, allowNull(parseByteA));
+    };
+    var parseInteger = function(value) {
+      return parseInt(value, 10);
+    };
+    var parseBigInteger = function(value) {
+      var valStr = String(value);
+      if (/^\d+$/.test(valStr)) {
+        return valStr;
+      }
+      return value;
+    };
+    var parseJsonArray = function(value) {
+      if (!value) {
+        return null;
+      }
+      return array.parse(value, allowNull(JSON.parse));
+    };
+    var parsePoint = function(value) {
+      if (value[0] !== "(") {
+        return null;
+      }
+      value = value.substring(1, value.length - 1).split(",");
+      return {
+        x: parseFloat(value[0]),
+        y: parseFloat(value[1])
+      };
+    };
+    var parseCircle = function(value) {
+      if (value[0] !== "<" && value[1] !== "(") {
+        return null;
+      }
+      var point = "(";
+      var radius = "";
+      var pointParsed = false;
+      for (var i = 2; i < value.length - 1; i++) {
+        if (!pointParsed) {
+          point += value[i];
+        }
+        if (value[i] === ")") {
+          pointParsed = true;
+          continue;
+        } else if (!pointParsed) {
+          continue;
+        }
+        if (value[i] === ",") {
+          continue;
+        }
+        radius += value[i];
+      }
+      var result = parsePoint(point);
+      result.radius = parseFloat(radius);
+      return result;
+    };
+    var init = function(register) {
+      register(20, parseBigInteger);
+      register(21, parseInteger);
+      register(23, parseInteger);
+      register(26, parseInteger);
+      register(700, parseFloat);
+      register(701, parseFloat);
+      register(16, parseBool);
+      register(1082, parseDate);
+      register(1114, parseDate);
+      register(1184, parseDate);
+      register(600, parsePoint);
+      register(651, parseStringArray);
+      register(718, parseCircle);
+      register(1e3, parseBoolArray);
+      register(1001, parseByteAArray);
+      register(1005, parseIntegerArray);
+      register(1007, parseIntegerArray);
+      register(1028, parseIntegerArray);
+      register(1016, parseBigIntegerArray);
+      register(1017, parsePointArray);
+      register(1021, parseFloatArray);
+      register(1022, parseFloatArray);
+      register(1231, parseFloatArray);
+      register(1014, parseStringArray);
+      register(1015, parseStringArray);
+      register(1008, parseStringArray);
+      register(1009, parseStringArray);
+      register(1040, parseStringArray);
+      register(1041, parseStringArray);
+      register(1115, parseDateArray);
+      register(1182, parseDateArray);
+      register(1185, parseDateArray);
+      register(1186, parseInterval);
+      register(1187, parseIntervalArray);
+      register(17, parseByteA);
+      register(114, JSON.parse.bind(JSON));
+      register(3802, JSON.parse.bind(JSON));
+      register(199, parseJsonArray);
+      register(3807, parseJsonArray);
+      register(3907, parseStringArray);
+      register(2951, parseStringArray);
+      register(791, parseStringArray);
+      register(1183, parseStringArray);
+      register(1270, parseStringArray);
+    };
+    module2.exports = {
+      init
+    };
+  }
+});
+
+// node_modules/pg-int8/index.js
+var require_pg_int8 = __commonJS({
+  "node_modules/pg-int8/index.js"(exports2, module2) {
+    "use strict";
+    var BASE = 1e6;
+    function readInt8(buffer) {
+      var high = buffer.readInt32BE(0);
+      var low = buffer.readUInt32BE(4);
+      var sign = "";
+      if (high < 0) {
+        high = ~high + (low === 0);
+        low = ~low + 1 >>> 0;
+        sign = "-";
+      }
+      var result = "";
+      var carry;
+      var t;
+      var digits;
+      var pad;
+      var l;
+      var i;
+      {
+        carry = high % BASE;
+        high = high / BASE >>> 0;
+        t = 4294967296 * carry + low;
+        low = t / BASE >>> 0;
+        digits = "" + (t - BASE * low);
+        if (low === 0 && high === 0) {
+          return sign + digits + result;
+        }
+        pad = "";
+        l = 6 - digits.length;
+        for (i = 0; i < l; i++) {
+          pad += "0";
+        }
+        result = pad + digits + result;
+      }
+      {
+        carry = high % BASE;
+        high = high / BASE >>> 0;
+        t = 4294967296 * carry + low;
+        low = t / BASE >>> 0;
+        digits = "" + (t - BASE * low);
+        if (low === 0 && high === 0) {
+          return sign + digits + result;
+        }
+        pad = "";
+        l = 6 - digits.length;
+        for (i = 0; i < l; i++) {
+          pad += "0";
+        }
+        result = pad + digits + result;
+      }
+      {
+        carry = high % BASE;
+        high = high / BASE >>> 0;
+        t = 4294967296 * carry + low;
+        low = t / BASE >>> 0;
+        digits = "" + (t - BASE * low);
+        if (low === 0 && high === 0) {
+          return sign + digits + result;
+        }
+        pad = "";
+        l = 6 - digits.length;
+        for (i = 0; i < l; i++) {
+          pad += "0";
+        }
+        result = pad + digits + result;
+      }
+      {
+        carry = high % BASE;
+        t = 4294967296 * carry + low;
+        digits = "" + t % BASE;
+        return sign + digits + result;
+      }
+    }
+    module2.exports = readInt8;
+  }
+});
+
+// node_modules/pg-types/lib/binaryParsers.js
+var require_binaryParsers = __commonJS({
+  "node_modules/pg-types/lib/binaryParsers.js"(exports2, module2) {
+    var parseInt64 = require_pg_int8();
+    var parseBits = function(data, bits, offset, invert, callback) {
+      offset = offset || 0;
+      invert = invert || false;
+      callback = callback || function(lastValue, newValue, bits2) {
+        return lastValue * Math.pow(2, bits2) + newValue;
+      };
+      var offsetBytes = offset >> 3;
+      var inv = function(value) {
+        if (invert) {
+          return ~value & 255;
+        }
+        return value;
+      };
+      var mask = 255;
+      var firstBits = 8 - offset % 8;
+      if (bits < firstBits) {
+        mask = 255 << 8 - bits & 255;
+        firstBits = bits;
+      }
+      if (offset) {
+        mask = mask >> offset % 8;
+      }
+      var result = 0;
+      if (offset % 8 + bits >= 8) {
+        result = callback(0, inv(data[offsetBytes]) & mask, firstBits);
+      }
+      var bytes = bits + offset >> 3;
+      for (var i = offsetBytes + 1; i < bytes; i++) {
+        result = callback(result, inv(data[i]), 8);
+      }
+      var lastBits = (bits + offset) % 8;
+      if (lastBits > 0) {
+        result = callback(result, inv(data[bytes]) >> 8 - lastBits, lastBits);
+      }
+      return result;
+    };
+    var parseFloatFromBits = function(data, precisionBits, exponentBits) {
+      var bias = Math.pow(2, exponentBits - 1) - 1;
+      var sign = parseBits(data, 1);
+      var exponent = parseBits(data, exponentBits, 1);
+      if (exponent === 0) {
+        return 0;
+      }
+      var precisionBitsCounter = 1;
+      var parsePrecisionBits = function(lastValue, newValue, bits) {
+        if (lastValue === 0) {
+          lastValue = 1;
+        }
+        for (var i = 1; i <= bits; i++) {
+          precisionBitsCounter /= 2;
+          if ((newValue & 1 << bits - i) > 0) {
+            lastValue += precisionBitsCounter;
+          }
+        }
+        return lastValue;
+      };
+      var mantissa = parseBits(data, precisionBits, exponentBits + 1, false, parsePrecisionBits);
+      if (exponent == Math.pow(2, exponentBits + 1) - 1) {
+        if (mantissa === 0) {
+          return sign === 0 ? Infinity : -Infinity;
+        }
+        return NaN;
+      }
+      return (sign === 0 ? 1 : -1) * Math.pow(2, exponent - bias) * mantissa;
+    };
+    var parseInt16 = function(value) {
+      if (parseBits(value, 1) == 1) {
+        return -1 * (parseBits(value, 15, 1, true) + 1);
+      }
+      return parseBits(value, 15, 1);
+    };
+    var parseInt32 = function(value) {
+      if (parseBits(value, 1) == 1) {
+        return -1 * (parseBits(value, 31, 1, true) + 1);
+      }
+      return parseBits(value, 31, 1);
+    };
+    var parseFloat32 = function(value) {
+      return parseFloatFromBits(value, 23, 8);
+    };
+    var parseFloat64 = function(value) {
+      return parseFloatFromBits(value, 52, 11);
+    };
+    var parseNumeric = function(value) {
+      var sign = parseBits(value, 16, 32);
+      if (sign == 49152) {
+        return NaN;
+      }
+      var weight = Math.pow(1e4, parseBits(value, 16, 16));
+      var result = 0;
+      var digits = [];
+      var ndigits = parseBits(value, 16);
+      for (var i = 0; i < ndigits; i++) {
+        result += parseBits(value, 16, 64 + 16 * i) * weight;
+        weight /= 1e4;
+      }
+      var scale = Math.pow(10, parseBits(value, 16, 48));
+      return (sign === 0 ? 1 : -1) * Math.round(result * scale) / scale;
+    };
+    var parseDate = function(isUTC, value) {
+      var sign = parseBits(value, 1);
+      var rawValue = parseBits(value, 63, 1);
+      var result = new Date((sign === 0 ? 1 : -1) * rawValue / 1e3 + 9466848e5);
+      if (!isUTC) {
+        result.setTime(result.getTime() + result.getTimezoneOffset() * 6e4);
+      }
+      result.usec = rawValue % 1e3;
+      result.getMicroSeconds = function() {
+        return this.usec;
+      };
+      result.setMicroSeconds = function(value2) {
+        this.usec = value2;
+      };
+      result.getUTCMicroSeconds = function() {
+        return this.usec;
+      };
+      return result;
+    };
+    var parseArray = function(value) {
+      var dim = parseBits(value, 32);
+      var flags = parseBits(value, 32, 32);
+      var elementType = parseBits(value, 32, 64);
+      var offset = 96;
+      var dims = [];
+      for (var i = 0; i < dim; i++) {
+        dims[i] = parseBits(value, 32, offset);
+        offset += 32;
+        offset += 32;
+      }
+      var parseElement = function(elementType2) {
+        var length = parseBits(value, 32, offset);
+        offset += 32;
+        if (length == 4294967295) {
+          return null;
+        }
+        var result;
+        if (elementType2 == 23 || elementType2 == 20) {
+          result = parseBits(value, length * 8, offset);
+          offset += length * 8;
+          return result;
+        } else if (elementType2 == 25) {
+          result = value.toString(this.encoding, offset >> 3, (offset += length << 3) >> 3);
+          return result;
+        } else {
+          console.log("ERROR: ElementType not implemented: " + elementType2);
+        }
+      };
+      var parse = function(dimension, elementType2) {
+        var array = [];
+        var i2;
+        if (dimension.length > 1) {
+          var count = dimension.shift();
+          for (i2 = 0; i2 < count; i2++) {
+            array[i2] = parse(dimension, elementType2);
+          }
+          dimension.unshift(count);
+        } else {
+          for (i2 = 0; i2 < dimension[0]; i2++) {
+            array[i2] = parseElement(elementType2);
+          }
+        }
+        return array;
+      };
+      return parse(dims, elementType);
+    };
+    var parseText = function(value) {
+      return value.toString("utf8");
+    };
+    var parseBool = function(value) {
+      if (value === null)
+        return null;
+      return parseBits(value, 8) > 0;
+    };
+    var init = function(register) {
+      register(20, parseInt64);
+      register(21, parseInt16);
+      register(23, parseInt32);
+      register(26, parseInt32);
+      register(1700, parseNumeric);
+      register(700, parseFloat32);
+      register(701, parseFloat64);
+      register(16, parseBool);
+      register(1114, parseDate.bind(null, false));
+      register(1184, parseDate.bind(null, true));
+      register(1e3, parseArray);
+      register(1007, parseArray);
+      register(1016, parseArray);
+      register(1008, parseArray);
+      register(1009, parseArray);
+      register(25, parseText);
+    };
+    module2.exports = {
+      init
+    };
+  }
+});
+
+// node_modules/pg-types/lib/builtins.js
+var require_builtins = __commonJS({
+  "node_modules/pg-types/lib/builtins.js"(exports2, module2) {
+    module2.exports = {
+      BOOL: 16,
+      BYTEA: 17,
+      CHAR: 18,
+      INT8: 20,
+      INT2: 21,
+      INT4: 23,
+      REGPROC: 24,
+      TEXT: 25,
+      OID: 26,
+      TID: 27,
+      XID: 28,
+      CID: 29,
+      JSON: 114,
+      XML: 142,
+      PG_NODE_TREE: 194,
+      SMGR: 210,
+      PATH: 602,
+      POLYGON: 604,
+      CIDR: 650,
+      FLOAT4: 700,
+      FLOAT8: 701,
+      ABSTIME: 702,
+      RELTIME: 703,
+      TINTERVAL: 704,
+      CIRCLE: 718,
+      MACADDR8: 774,
+      MONEY: 790,
+      MACADDR: 829,
+      INET: 869,
+      ACLITEM: 1033,
+      BPCHAR: 1042,
+      VARCHAR: 1043,
+      DATE: 1082,
+      TIME: 1083,
+      TIMESTAMP: 1114,
+      TIMESTAMPTZ: 1184,
+      INTERVAL: 1186,
+      TIMETZ: 1266,
+      BIT: 1560,
+      VARBIT: 1562,
+      NUMERIC: 1700,
+      REFCURSOR: 1790,
+      REGPROCEDURE: 2202,
+      REGOPER: 2203,
+      REGOPERATOR: 2204,
+      REGCLASS: 2205,
+      REGTYPE: 2206,
+      UUID: 2950,
+      TXID_SNAPSHOT: 2970,
+      PG_LSN: 3220,
+      PG_NDISTINCT: 3361,
+      PG_DEPENDENCIES: 3402,
+      TSVECTOR: 3614,
+      TSQUERY: 3615,
+      GTSVECTOR: 3642,
+      REGCONFIG: 3734,
+      REGDICTIONARY: 3769,
+      JSONB: 3802,
+      REGNAMESPACE: 4089,
+      REGROLE: 4096
+    };
+  }
+});
+
+// node_modules/pg-types/index.js
+var require_pg_types = __commonJS({
+  "node_modules/pg-types/index.js"(exports2) {
+    var textParsers = require_textParsers();
+    var binaryParsers = require_binaryParsers();
+    var arrayParser = require_arrayParser();
+    var builtinTypes = require_builtins();
+    exports2.getTypeParser = getTypeParser;
+    exports2.setTypeParser = setTypeParser;
+    exports2.arrayParser = arrayParser;
+    exports2.builtins = builtinTypes;
+    var typeParsers = {
+      text: {},
+      binary: {}
+    };
+    function noParse(val) {
+      return String(val);
+    }
+    function getTypeParser(oid, format) {
+      format = format || "text";
+      if (!typeParsers[format]) {
+        return noParse;
+      }
+      return typeParsers[format][oid] || noParse;
+    }
+    function setTypeParser(oid, format, parseFn) {
+      if (typeof format == "function") {
+        parseFn = format;
+        format = "text";
+      }
+      typeParsers[format][oid] = parseFn;
+    }
+    textParsers.init(function(oid, converter) {
+      typeParsers.text[oid] = converter;
+    });
+    binaryParsers.init(function(oid, converter) {
+      typeParsers.binary[oid] = converter;
+    });
+  }
+});
+
+// node_modules/pg/lib/defaults.js
+var require_defaults = __commonJS({
+  "node_modules/pg/lib/defaults.js"(exports2, module2) {
+    "use strict";
+    module2.exports = {
+      // database host. defaults to localhost
+      host: "localhost",
+      // database user's name
+      user: process.platform === "win32" ? process.env.USERNAME : process.env.USER,
+      // name of database to connect
+      database: void 0,
+      // database user's password
+      password: null,
+      // a Postgres connection string to be used instead of setting individual connection items
+      // NOTE:  Setting this value will cause it to override any other value (such as database or user) defined
+      // in the defaults object.
+      connectionString: void 0,
+      // database port
+      port: 5432,
+      // number of rows to return at a time from a prepared statement's
+      // portal. 0 will return all rows at once
+      rows: 0,
+      // binary result mode
+      binary: false,
+      // Connection pool options - see https://github.com/brianc/node-pg-pool
+      // number of connections to use in connection pool
+      // 0 will disable connection pooling
+      max: 10,
+      // max milliseconds a client can go unused before it is removed
+      // from the pool and destroyed
+      idleTimeoutMillis: 3e4,
+      client_encoding: "",
+      ssl: false,
+      application_name: void 0,
+      fallback_application_name: void 0,
+      options: void 0,
+      parseInputDatesAsUTC: false,
+      // max milliseconds any query using this connection will execute for before timing out in error.
+      // false=unlimited
+      statement_timeout: false,
+      // Abort any statement that waits longer than the specified duration in milliseconds while attempting to acquire a lock.
+      // false=unlimited
+      lock_timeout: false,
+      // Terminate any session with an open transaction that has been idle for longer than the specified duration in milliseconds
+      // false=unlimited
+      idle_in_transaction_session_timeout: false,
+      // max milliseconds to wait for query to complete (client side)
+      query_timeout: false,
+      connect_timeout: 0,
+      keepalives: 1,
+      keepalives_idle: 0
+    };
+    var pgTypes = require_pg_types();
+    var parseBigInteger = pgTypes.getTypeParser(20, "text");
+    var parseBigIntegerArray = pgTypes.getTypeParser(1016, "text");
+    module2.exports.__defineSetter__("parseInt8", function(val) {
+      pgTypes.setTypeParser(20, "text", val ? pgTypes.getTypeParser(23, "text") : parseBigInteger);
+      pgTypes.setTypeParser(1016, "text", val ? pgTypes.getTypeParser(1007, "text") : parseBigIntegerArray);
+    });
+  }
+});
+
+// node_modules/pg/lib/utils.js
+var require_utils = __commonJS({
+  "node_modules/pg/lib/utils.js"(exports2, module2) {
+    "use strict";
+    var defaults = require_defaults();
+    function escapeElement(elementRepresentation) {
+      var escaped = elementRepresentation.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+      return '"' + escaped + '"';
+    }
+    function arrayString(val) {
+      var result = "{";
+      for (var i = 0; i < val.length; i++) {
+        if (i > 0) {
+          result = result + ",";
+        }
+        if (val[i] === null || typeof val[i] === "undefined") {
+          result = result + "NULL";
+        } else if (Array.isArray(val[i])) {
+          result = result + arrayString(val[i]);
+        } else if (val[i] instanceof Buffer) {
+          result += "\\\\x" + val[i].toString("hex");
+        } else {
+          result += escapeElement(prepareValue(val[i]));
+        }
+      }
+      result = result + "}";
+      return result;
+    }
+    var prepareValue = function(val, seen) {
+      if (val == null) {
+        return null;
+      }
+      if (val instanceof Buffer) {
+        return val;
+      }
+      if (ArrayBuffer.isView(val)) {
+        var buf = Buffer.from(val.buffer, val.byteOffset, val.byteLength);
+        if (buf.length === val.byteLength) {
+          return buf;
+        }
+        return buf.slice(val.byteOffset, val.byteOffset + val.byteLength);
+      }
+      if (val instanceof Date) {
+        if (defaults.parseInputDatesAsUTC) {
+          return dateToStringUTC(val);
+        } else {
+          return dateToString(val);
+        }
+      }
+      if (Array.isArray(val)) {
+        return arrayString(val);
+      }
+      if (typeof val === "object") {
+        return prepareObject(val, seen);
+      }
+      return val.toString();
+    };
+    function prepareObject(val, seen) {
+      if (val && typeof val.toPostgres === "function") {
+        seen = seen || [];
+        if (seen.indexOf(val) !== -1) {
+          throw new Error('circular reference detected while preparing "' + val + '" for query');
+        }
+        seen.push(val);
+        return prepareValue(val.toPostgres(prepareValue), seen);
+      }
+      return JSON.stringify(val);
+    }
+    function pad(number, digits) {
+      number = "" + number;
+      while (number.length < digits) {
+        number = "0" + number;
+      }
+      return number;
+    }
+    function dateToString(date) {
+      var offset = -date.getTimezoneOffset();
+      var year = date.getFullYear();
+      var isBCYear = year < 1;
+      if (isBCYear)
+        year = Math.abs(year) + 1;
+      var ret = pad(year, 4) + "-" + pad(date.getMonth() + 1, 2) + "-" + pad(date.getDate(), 2) + "T" + pad(date.getHours(), 2) + ":" + pad(date.getMinutes(), 2) + ":" + pad(date.getSeconds(), 2) + "." + pad(date.getMilliseconds(), 3);
+      if (offset < 0) {
+        ret += "-";
+        offset *= -1;
+      } else {
+        ret += "+";
+      }
+      ret += pad(Math.floor(offset / 60), 2) + ":" + pad(offset % 60, 2);
+      if (isBCYear)
+        ret += " BC";
+      return ret;
+    }
+    function dateToStringUTC(date) {
+      var year = date.getUTCFullYear();
+      var isBCYear = year < 1;
+      if (isBCYear)
+        year = Math.abs(year) + 1;
+      var ret = pad(year, 4) + "-" + pad(date.getUTCMonth() + 1, 2) + "-" + pad(date.getUTCDate(), 2) + "T" + pad(date.getUTCHours(), 2) + ":" + pad(date.getUTCMinutes(), 2) + ":" + pad(date.getUTCSeconds(), 2) + "." + pad(date.getUTCMilliseconds(), 3);
+      ret += "+00:00";
+      if (isBCYear)
+        ret += " BC";
+      return ret;
+    }
+    function normalizeQueryConfig(config2, values, callback) {
+      config2 = typeof config2 === "string" ? { text: config2 } : config2;
+      if (values) {
+        if (typeof values === "function") {
+          config2.callback = values;
+        } else {
+          config2.values = values;
+        }
+      }
+      if (callback) {
+        config2.callback = callback;
+      }
+      return config2;
+    }
+    var escapeIdentifier = function(str) {
+      return '"' + str.replace(/"/g, '""') + '"';
+    };
+    var escapeLiteral = function(str) {
+      var hasBackslash = false;
+      var escaped = "'";
+      for (var i = 0; i < str.length; i++) {
+        var c = str[i];
+        if (c === "'") {
+          escaped += c + c;
+        } else if (c === "\\") {
+          escaped += c + c;
+          hasBackslash = true;
+        } else {
+          escaped += c;
+        }
+      }
+      escaped += "'";
+      if (hasBackslash === true) {
+        escaped = " E" + escaped;
+      }
+      return escaped;
+    };
+    module2.exports = {
+      prepareValue: function prepareValueWrapper(value) {
+        return prepareValue(value);
+      },
+      normalizeQueryConfig,
+      escapeIdentifier,
+      escapeLiteral
+    };
+  }
+});
+
+// node_modules/pg/lib/crypto/utils-legacy.js
+var require_utils_legacy = __commonJS({
+  "node_modules/pg/lib/crypto/utils-legacy.js"(exports2, module2) {
+    "use strict";
+    var nodeCrypto = require("crypto");
+    function md5(string) {
+      return nodeCrypto.createHash("md5").update(string, "utf-8").digest("hex");
+    }
+    function postgresMd5PasswordHash(user, password, salt) {
+      var inner = md5(password + user);
+      var outer = md5(Buffer.concat([Buffer.from(inner), salt]));
+      return "md5" + outer;
+    }
+    function sha256(text) {
+      return nodeCrypto.createHash("sha256").update(text).digest();
+    }
+    function hmacSha256(key, msg) {
+      return nodeCrypto.createHmac("sha256", key).update(msg).digest();
+    }
+    async function deriveKey(password, salt, iterations) {
+      return nodeCrypto.pbkdf2Sync(password, salt, iterations, 32, "sha256");
+    }
+    module2.exports = {
+      postgresMd5PasswordHash,
+      randomBytes: nodeCrypto.randomBytes,
+      deriveKey,
+      sha256,
+      hmacSha256,
+      md5
+    };
+  }
+});
+
+// node_modules/pg/lib/crypto/utils-webcrypto.js
+var require_utils_webcrypto = __commonJS({
+  "node_modules/pg/lib/crypto/utils-webcrypto.js"(exports2, module2) {
+    var nodeCrypto = require("crypto");
+    module2.exports = {
+      postgresMd5PasswordHash,
+      randomBytes,
+      deriveKey,
+      sha256,
+      hmacSha256,
+      md5
+    };
+    var webCrypto = nodeCrypto.webcrypto || globalThis.crypto;
+    var subtleCrypto = webCrypto.subtle;
+    var textEncoder = new TextEncoder();
+    function randomBytes(length) {
+      return webCrypto.getRandomValues(Buffer.alloc(length));
+    }
+    async function md5(string) {
+      try {
+        return nodeCrypto.createHash("md5").update(string, "utf-8").digest("hex");
+      } catch (e) {
+        const data = typeof string === "string" ? textEncoder.encode(string) : string;
+        const hash = await subtleCrypto.digest("MD5", data);
+        return Array.from(new Uint8Array(hash)).map((b) => b.toString(16).padStart(2, "0")).join("");
+      }
+    }
+    async function postgresMd5PasswordHash(user, password, salt) {
+      var inner = await md5(password + user);
+      var outer = await md5(Buffer.concat([Buffer.from(inner), salt]));
+      return "md5" + outer;
+    }
+    async function sha256(text) {
+      return await subtleCrypto.digest("SHA-256", text);
+    }
+    async function hmacSha256(keyBuffer, msg) {
+      const key = await subtleCrypto.importKey("raw", keyBuffer, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+      return await subtleCrypto.sign("HMAC", key, textEncoder.encode(msg));
+    }
+    async function deriveKey(password, salt, iterations) {
+      const key = await subtleCrypto.importKey("raw", textEncoder.encode(password), "PBKDF2", false, ["deriveBits"]);
+      const params = { name: "PBKDF2", hash: "SHA-256", salt, iterations };
+      return await subtleCrypto.deriveBits(params, key, 32 * 8, ["deriveBits"]);
+    }
+  }
+});
+
+// node_modules/pg/lib/crypto/utils.js
+var require_utils2 = __commonJS({
+  "node_modules/pg/lib/crypto/utils.js"(exports2, module2) {
+    "use strict";
+    var useLegacyCrypto = parseInt(process.versions && process.versions.node && process.versions.node.split(".")[0]) < 15;
+    if (useLegacyCrypto) {
+      module2.exports = require_utils_legacy();
+    } else {
+      module2.exports = require_utils_webcrypto();
+    }
+  }
+});
+
+// node_modules/pg/lib/crypto/sasl.js
+var require_sasl = __commonJS({
+  "node_modules/pg/lib/crypto/sasl.js"(exports2, module2) {
+    "use strict";
+    var crypto = require_utils2();
+    function startSession(mechanisms) {
+      if (mechanisms.indexOf("SCRAM-SHA-256") === -1) {
+        throw new Error("SASL: Only mechanism SCRAM-SHA-256 is currently supported");
+      }
+      const clientNonce = crypto.randomBytes(18).toString("base64");
+      return {
+        mechanism: "SCRAM-SHA-256",
+        clientNonce,
+        response: "n,,n=*,r=" + clientNonce,
+        message: "SASLInitialResponse"
+      };
+    }
+    async function continueSession(session, password, serverData) {
+      if (session.message !== "SASLInitialResponse") {
+        throw new Error("SASL: Last message was not SASLInitialResponse");
+      }
+      if (typeof password !== "string") {
+        throw new Error("SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string");
+      }
+      if (password === "") {
+        throw new Error("SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a non-empty string");
+      }
+      if (typeof serverData !== "string") {
+        throw new Error("SASL: SCRAM-SERVER-FIRST-MESSAGE: serverData must be a string");
+      }
+      const sv = parseServerFirstMessage(serverData);
+      if (!sv.nonce.startsWith(session.clientNonce)) {
+        throw new Error("SASL: SCRAM-SERVER-FIRST-MESSAGE: server nonce does not start with client nonce");
+      } else if (sv.nonce.length === session.clientNonce.length) {
+        throw new Error("SASL: SCRAM-SERVER-FIRST-MESSAGE: server nonce is too short");
+      }
+      var clientFirstMessageBare = "n=*,r=" + session.clientNonce;
+      var serverFirstMessage = "r=" + sv.nonce + ",s=" + sv.salt + ",i=" + sv.iteration;
+      var clientFinalMessageWithoutProof = "c=biws,r=" + sv.nonce;
+      var authMessage = clientFirstMessageBare + "," + serverFirstMessage + "," + clientFinalMessageWithoutProof;
+      var saltBytes = Buffer.from(sv.salt, "base64");
+      var saltedPassword = await crypto.deriveKey(password, saltBytes, sv.iteration);
+      var clientKey = await crypto.hmacSha256(saltedPassword, "Client Key");
+      var storedKey = await crypto.sha256(clientKey);
+      var clientSignature = await crypto.hmacSha256(storedKey, authMessage);
+      var clientProof = xorBuffers(Buffer.from(clientKey), Buffer.from(clientSignature)).toString("base64");
+      var serverKey = await crypto.hmacSha256(saltedPassword, "Server Key");
+      var serverSignatureBytes = await crypto.hmacSha256(serverKey, authMessage);
+      session.message = "SASLResponse";
+      session.serverSignature = Buffer.from(serverSignatureBytes).toString("base64");
+      session.response = clientFinalMessageWithoutProof + ",p=" + clientProof;
+    }
+    function finalizeSession(session, serverData) {
+      if (session.message !== "SASLResponse") {
+        throw new Error("SASL: Last message was not SASLResponse");
+      }
+      if (typeof serverData !== "string") {
+        throw new Error("SASL: SCRAM-SERVER-FINAL-MESSAGE: serverData must be a string");
+      }
+      const { serverSignature } = parseServerFinalMessage(serverData);
+      if (serverSignature !== session.serverSignature) {
+        throw new Error("SASL: SCRAM-SERVER-FINAL-MESSAGE: server signature does not match");
+      }
+    }
+    function isPrintableChars(text) {
+      if (typeof text !== "string") {
+        throw new TypeError("SASL: text must be a string");
+      }
+      return text.split("").map((_, i) => text.charCodeAt(i)).every((c) => c >= 33 && c <= 43 || c >= 45 && c <= 126);
+    }
+    function isBase64(text) {
+      return /^(?:[a-zA-Z0-9+/]{4})*(?:[a-zA-Z0-9+/]{2}==|[a-zA-Z0-9+/]{3}=)?$/.test(text);
+    }
+    function parseAttributePairs(text) {
+      if (typeof text !== "string") {
+        throw new TypeError("SASL: attribute pairs text must be a string");
+      }
+      return new Map(
+        text.split(",").map((attrValue) => {
+          if (!/^.=/.test(attrValue)) {
+            throw new Error("SASL: Invalid attribute pair entry");
+          }
+          const name = attrValue[0];
+          const value = attrValue.substring(2);
+          return [name, value];
+        })
+      );
+    }
+    function parseServerFirstMessage(data) {
+      const attrPairs = parseAttributePairs(data);
+      const nonce = attrPairs.get("r");
+      if (!nonce) {
+        throw new Error("SASL: SCRAM-SERVER-FIRST-MESSAGE: nonce missing");
+      } else if (!isPrintableChars(nonce)) {
+        throw new Error("SASL: SCRAM-SERVER-FIRST-MESSAGE: nonce must only contain printable characters");
+      }
+      const salt = attrPairs.get("s");
+      if (!salt) {
+        throw new Error("SASL: SCRAM-SERVER-FIRST-MESSAGE: salt missing");
+      } else if (!isBase64(salt)) {
+        throw new Error("SASL: SCRAM-SERVER-FIRST-MESSAGE: salt must be base64");
+      }
+      const iterationText = attrPairs.get("i");
+      if (!iterationText) {
+        throw new Error("SASL: SCRAM-SERVER-FIRST-MESSAGE: iteration missing");
+      } else if (!/^[1-9][0-9]*$/.test(iterationText)) {
+        throw new Error("SASL: SCRAM-SERVER-FIRST-MESSAGE: invalid iteration count");
+      }
+      const iteration = parseInt(iterationText, 10);
+      return {
+        nonce,
+        salt,
+        iteration
+      };
+    }
+    function parseServerFinalMessage(serverData) {
+      const attrPairs = parseAttributePairs(serverData);
+      const serverSignature = attrPairs.get("v");
+      if (!serverSignature) {
+        throw new Error("SASL: SCRAM-SERVER-FINAL-MESSAGE: server signature is missing");
+      } else if (!isBase64(serverSignature)) {
+        throw new Error("SASL: SCRAM-SERVER-FINAL-MESSAGE: server signature must be base64");
+      }
+      return {
+        serverSignature
+      };
+    }
+    function xorBuffers(a, b) {
+      if (!Buffer.isBuffer(a)) {
+        throw new TypeError("first argument must be a Buffer");
+      }
+      if (!Buffer.isBuffer(b)) {
+        throw new TypeError("second argument must be a Buffer");
+      }
+      if (a.length !== b.length) {
+        throw new Error("Buffer lengths must match");
+      }
+      if (a.length === 0) {
+        throw new Error("Buffers cannot be empty");
+      }
+      return Buffer.from(a.map((_, i) => a[i] ^ b[i]));
+    }
+    module2.exports = {
+      startSession,
+      continueSession,
+      finalizeSession
+    };
+  }
+});
+
+// node_modules/pg/lib/type-overrides.js
+var require_type_overrides = __commonJS({
+  "node_modules/pg/lib/type-overrides.js"(exports2, module2) {
+    "use strict";
+    var types = require_pg_types();
+    function TypeOverrides(userTypes) {
+      this._types = userTypes || types;
+      this.text = {};
+      this.binary = {};
+    }
+    TypeOverrides.prototype.getOverrides = function(format) {
+      switch (format) {
+        case "text":
+          return this.text;
+        case "binary":
+          return this.binary;
+        default:
+          return {};
+      }
+    };
+    TypeOverrides.prototype.setTypeParser = function(oid, format, parseFn) {
+      if (typeof format === "function") {
+        parseFn = format;
+        format = "text";
+      }
+      this.getOverrides(format)[oid] = parseFn;
+    };
+    TypeOverrides.prototype.getTypeParser = function(oid, format) {
+      format = format || "text";
+      return this.getOverrides(format)[oid] || this._types.getTypeParser(oid, format);
+    };
+    module2.exports = TypeOverrides;
+  }
+});
+
+// node_modules/pg-connection-string/index.js
+var require_pg_connection_string = __commonJS({
+  "node_modules/pg-connection-string/index.js"(exports2, module2) {
+    "use strict";
+    function parse(str) {
+      if (str.charAt(0) === "/") {
+        const config3 = str.split(" ");
+        return { host: config3[0], database: config3[1] };
+      }
+      const config2 = {};
+      let result;
+      let dummyHost = false;
+      if (/ |%[^a-f0-9]|%[a-f0-9][^a-f0-9]/i.test(str)) {
+        str = encodeURI(str).replace(/\%25(\d\d)/g, "%$1");
+      }
+      try {
+        result = new URL(str, "postgres://base");
+      } catch (e) {
+        result = new URL(str.replace("@/", "@___DUMMY___/"), "postgres://base");
+        dummyHost = true;
+      }
+      for (const entry of result.searchParams.entries()) {
+        config2[entry[0]] = entry[1];
+      }
+      config2.user = config2.user || decodeURIComponent(result.username);
+      config2.password = config2.password || decodeURIComponent(result.password);
+      if (result.protocol == "socket:") {
+        config2.host = decodeURI(result.pathname);
+        config2.database = result.searchParams.get("db");
+        config2.client_encoding = result.searchParams.get("encoding");
+        return config2;
+      }
+      const hostname = dummyHost ? "" : result.hostname;
+      if (!config2.host) {
+        config2.host = decodeURIComponent(hostname);
+      } else if (hostname && /^%2f/i.test(hostname)) {
+        result.pathname = hostname + result.pathname;
+      }
+      if (!config2.port) {
+        config2.port = result.port;
+      }
+      const pathname = result.pathname.slice(1) || null;
+      config2.database = pathname ? decodeURI(pathname) : null;
+      if (config2.ssl === "true" || config2.ssl === "1") {
+        config2.ssl = true;
+      }
+      if (config2.ssl === "0") {
+        config2.ssl = false;
+      }
+      if (config2.sslcert || config2.sslkey || config2.sslrootcert || config2.sslmode) {
+        config2.ssl = {};
+      }
+      const fs = config2.sslcert || config2.sslkey || config2.sslrootcert ? require("fs") : null;
+      if (config2.sslcert) {
+        config2.ssl.cert = fs.readFileSync(config2.sslcert).toString();
+      }
+      if (config2.sslkey) {
+        config2.ssl.key = fs.readFileSync(config2.sslkey).toString();
+      }
+      if (config2.sslrootcert) {
+        config2.ssl.ca = fs.readFileSync(config2.sslrootcert).toString();
+      }
+      switch (config2.sslmode) {
+        case "disable": {
+          config2.ssl = false;
+          break;
+        }
+        case "prefer":
+        case "require":
+        case "verify-ca":
+        case "verify-full": {
+          break;
+        }
+        case "no-verify": {
+          config2.ssl.rejectUnauthorized = false;
+          break;
+        }
+      }
+      return config2;
+    }
+    module2.exports = parse;
+    parse.parse = parse;
+  }
+});
+
+// node_modules/pg/lib/connection-parameters.js
+var require_connection_parameters = __commonJS({
+  "node_modules/pg/lib/connection-parameters.js"(exports2, module2) {
+    "use strict";
+    var dns = require("dns");
+    var defaults = require_defaults();
+    var parse = require_pg_connection_string().parse;
+    var val = function(key, config2, envVar) {
+      if (envVar === void 0) {
+        envVar = process.env["PG" + key.toUpperCase()];
+      } else if (envVar === false) {
+      } else {
+        envVar = process.env[envVar];
+      }
+      return config2[key] || envVar || defaults[key];
+    };
+    var readSSLConfigFromEnvironment = function() {
+      switch (process.env.PGSSLMODE) {
+        case "disable":
+          return false;
+        case "prefer":
+        case "require":
+        case "verify-ca":
+        case "verify-full":
+          return true;
+        case "no-verify":
+          return { rejectUnauthorized: false };
+      }
+      return defaults.ssl;
+    };
+    var quoteParamValue = function(value) {
+      return "'" + ("" + value).replace(/\\/g, "\\\\").replace(/'/g, "\\'") + "'";
+    };
+    var add = function(params, config2, paramName) {
+      var value = config2[paramName];
+      if (value !== void 0 && value !== null) {
+        params.push(paramName + "=" + quoteParamValue(value));
+      }
+    };
+    var ConnectionParameters = class {
+      constructor(config2) {
+        config2 = typeof config2 === "string" ? parse(config2) : config2 || {};
+        if (config2.connectionString) {
+          config2 = Object.assign({}, config2, parse(config2.connectionString));
+        }
+        this.user = val("user", config2);
+        this.database = val("database", config2);
+        if (this.database === void 0) {
+          this.database = this.user;
+        }
+        this.port = parseInt(val("port", config2), 10);
+        this.host = val("host", config2);
+        Object.defineProperty(this, "password", {
+          configurable: true,
+          enumerable: false,
+          writable: true,
+          value: val("password", config2)
+        });
+        this.binary = val("binary", config2);
+        this.options = val("options", config2);
+        this.ssl = typeof config2.ssl === "undefined" ? readSSLConfigFromEnvironment() : config2.ssl;
+        if (typeof this.ssl === "string") {
+          if (this.ssl === "true") {
+            this.ssl = true;
+          }
+        }
+        if (this.ssl === "no-verify") {
+          this.ssl = { rejectUnauthorized: false };
+        }
+        if (this.ssl && this.ssl.key) {
+          Object.defineProperty(this.ssl, "key", {
+            enumerable: false
+          });
+        }
+        this.client_encoding = val("client_encoding", config2);
+        this.replication = val("replication", config2);
+        this.isDomainSocket = !(this.host || "").indexOf("/");
+        this.application_name = val("application_name", config2, "PGAPPNAME");
+        this.fallback_application_name = val("fallback_application_name", config2, false);
+        this.statement_timeout = val("statement_timeout", config2, false);
+        this.lock_timeout = val("lock_timeout", config2, false);
+        this.idle_in_transaction_session_timeout = val("idle_in_transaction_session_timeout", config2, false);
+        this.query_timeout = val("query_timeout", config2, false);
+        if (config2.connectionTimeoutMillis === void 0) {
+          this.connect_timeout = process.env.PGCONNECT_TIMEOUT || 0;
+        } else {
+          this.connect_timeout = Math.floor(config2.connectionTimeoutMillis / 1e3);
+        }
+        if (config2.keepAlive === false) {
+          this.keepalives = 0;
+        } else if (config2.keepAlive === true) {
+          this.keepalives = 1;
+        }
+        if (typeof config2.keepAliveInitialDelayMillis === "number") {
+          this.keepalives_idle = Math.floor(config2.keepAliveInitialDelayMillis / 1e3);
+        }
+      }
+      getLibpqConnectionString(cb) {
+        var params = [];
+        add(params, this, "user");
+        add(params, this, "password");
+        add(params, this, "port");
+        add(params, this, "application_name");
+        add(params, this, "fallback_application_name");
+        add(params, this, "connect_timeout");
+        add(params, this, "options");
+        var ssl = typeof this.ssl === "object" ? this.ssl : this.ssl ? { sslmode: this.ssl } : {};
+        add(params, ssl, "sslmode");
+        add(params, ssl, "sslca");
+        add(params, ssl, "sslkey");
+        add(params, ssl, "sslcert");
+        add(params, ssl, "sslrootcert");
+        if (this.database) {
+          params.push("dbname=" + quoteParamValue(this.database));
+        }
+        if (this.replication) {
+          params.push("replication=" + quoteParamValue(this.replication));
+        }
+        if (this.host) {
+          params.push("host=" + quoteParamValue(this.host));
+        }
+        if (this.isDomainSocket) {
+          return cb(null, params.join(" "));
+        }
+        if (this.client_encoding) {
+          params.push("client_encoding=" + quoteParamValue(this.client_encoding));
+        }
+        dns.lookup(this.host, function(err, address) {
+          if (err)
+            return cb(err, null);
+          params.push("hostaddr=" + quoteParamValue(address));
+          return cb(null, params.join(" "));
+        });
+      }
+    };
+    module2.exports = ConnectionParameters;
+  }
+});
+
+// node_modules/pg/lib/result.js
+var require_result = __commonJS({
+  "node_modules/pg/lib/result.js"(exports2, module2) {
+    "use strict";
+    var types = require_pg_types();
+    var matchRegexp = /^([A-Za-z]+)(?: (\d+))?(?: (\d+))?/;
+    var Result = class {
+      constructor(rowMode, types2) {
+        this.command = null;
+        this.rowCount = null;
+        this.oid = null;
+        this.rows = [];
+        this.fields = [];
+        this._parsers = void 0;
+        this._types = types2;
+        this.RowCtor = null;
+        this.rowAsArray = rowMode === "array";
+        if (this.rowAsArray) {
+          this.parseRow = this._parseRowAsArray;
+        }
+        this._prebuiltEmptyResultObject = null;
+      }
+      // adds a command complete message
+      addCommandComplete(msg) {
+        var match;
+        if (msg.text) {
+          match = matchRegexp.exec(msg.text);
+        } else {
+          match = matchRegexp.exec(msg.command);
+        }
+        if (match) {
+          this.command = match[1];
+          if (match[3]) {
+            this.oid = parseInt(match[2], 10);
+            this.rowCount = parseInt(match[3], 10);
+          } else if (match[2]) {
+            this.rowCount = parseInt(match[2], 10);
+          }
+        }
+      }
+      _parseRowAsArray(rowData) {
+        var row = new Array(rowData.length);
+        for (var i = 0, len = rowData.length; i < len; i++) {
+          var rawValue = rowData[i];
+          if (rawValue !== null) {
+            row[i] = this._parsers[i](rawValue);
+          } else {
+            row[i] = null;
+          }
+        }
+        return row;
+      }
+      parseRow(rowData) {
+        var row = { ...this._prebuiltEmptyResultObject };
+        for (var i = 0, len = rowData.length; i < len; i++) {
+          var rawValue = rowData[i];
+          var field = this.fields[i].name;
+          if (rawValue !== null) {
+            row[field] = this._parsers[i](rawValue);
+          }
+        }
+        return row;
+      }
+      addRow(row) {
+        this.rows.push(row);
+      }
+      addFields(fieldDescriptions) {
+        this.fields = fieldDescriptions;
+        if (this.fields.length) {
+          this._parsers = new Array(fieldDescriptions.length);
+        }
+        for (var i = 0; i < fieldDescriptions.length; i++) {
+          var desc = fieldDescriptions[i];
+          if (this._types) {
+            this._parsers[i] = this._types.getTypeParser(desc.dataTypeID, desc.format || "text");
+          } else {
+            this._parsers[i] = types.getTypeParser(desc.dataTypeID, desc.format || "text");
+          }
+        }
+        this._createPrebuiltEmptyResultObject();
+      }
+      _createPrebuiltEmptyResultObject() {
+        var row = {};
+        for (var i = 0; i < this.fields.length; i++) {
+          row[this.fields[i].name] = null;
+        }
+        this._prebuiltEmptyResultObject = { ...row };
+      }
+    };
+    module2.exports = Result;
+  }
+});
+
+// node_modules/pg/lib/query.js
+var require_query = __commonJS({
+  "node_modules/pg/lib/query.js"(exports2, module2) {
+    "use strict";
+    var { EventEmitter: EventEmitter2 } = require("events");
+    var Result = require_result();
+    var utils = require_utils();
+    var Query = class extends EventEmitter2 {
+      constructor(config2, values, callback) {
+        super();
+        config2 = utils.normalizeQueryConfig(config2, values, callback);
+        this.text = config2.text;
+        this.values = config2.values;
+        this.rows = config2.rows;
+        this.types = config2.types;
+        this.name = config2.name;
+        this.binary = config2.binary;
+        this.portal = config2.portal || "";
+        this.callback = config2.callback;
+        this._rowMode = config2.rowMode;
+        if (process.domain && config2.callback) {
+          this.callback = process.domain.bind(config2.callback);
+        }
+        this._result = new Result(this._rowMode, this.types);
+        this._results = this._result;
+        this.isPreparedStatement = false;
+        this._canceledDueToError = false;
+        this._promise = null;
+      }
+      requiresPreparation() {
+        if (this.name) {
+          return true;
+        }
+        if (this.rows) {
+          return true;
+        }
+        if (!this.text) {
+          return false;
+        }
+        if (!this.values) {
+          return false;
+        }
+        return this.values.length > 0;
+      }
+      _checkForMultirow() {
+        if (this._result.command) {
+          if (!Array.isArray(this._results)) {
+            this._results = [this._result];
+          }
+          this._result = new Result(this._rowMode, this.types);
+          this._results.push(this._result);
+        }
+      }
+      // associates row metadata from the supplied
+      // message with this query object
+      // metadata used when parsing row results
+      handleRowDescription(msg) {
+        this._checkForMultirow();
+        this._result.addFields(msg.fields);
+        this._accumulateRows = this.callback || !this.listeners("row").length;
+      }
+      handleDataRow(msg) {
+        let row;
+        if (this._canceledDueToError) {
+          return;
+        }
+        try {
+          row = this._result.parseRow(msg.fields);
+        } catch (err) {
+          this._canceledDueToError = err;
+          return;
+        }
+        this.emit("row", row, this._result);
+        if (this._accumulateRows) {
+          this._result.addRow(row);
+        }
+      }
+      handleCommandComplete(msg, connection) {
+        this._checkForMultirow();
+        this._result.addCommandComplete(msg);
+        if (this.rows) {
+          connection.sync();
+        }
+      }
+      // if a named prepared statement is created with empty query text
+      // the backend will send an emptyQuery message but *not* a command complete message
+      // since we pipeline sync immediately after execute we don't need to do anything here
+      // unless we have rows specified, in which case we did not pipeline the intial sync call
+      handleEmptyQuery(connection) {
+        if (this.rows) {
+          connection.sync();
+        }
+      }
+      handleError(err, connection) {
+        if (this._canceledDueToError) {
+          err = this._canceledDueToError;
+          this._canceledDueToError = false;
+        }
+        if (this.callback) {
+          return this.callback(err);
+        }
+        this.emit("error", err);
+      }
+      handleReadyForQuery(con) {
+        if (this._canceledDueToError) {
+          return this.handleError(this._canceledDueToError, con);
+        }
+        if (this.callback) {
+          try {
+            this.callback(null, this._results);
+          } catch (err) {
+            process.nextTick(() => {
+              throw err;
+            });
+          }
+        }
+        this.emit("end", this._results);
+      }
+      submit(connection) {
+        if (typeof this.text !== "string" && typeof this.name !== "string") {
+          return new Error("A query must have either text or a name. Supplying neither is unsupported.");
+        }
+        const previous = connection.parsedStatements[this.name];
+        if (this.text && previous && this.text !== previous) {
+          return new Error(`Prepared statements must be unique - '${this.name}' was used for a different statement`);
+        }
+        if (this.values && !Array.isArray(this.values)) {
+          return new Error("Query values must be an array");
+        }
+        if (this.requiresPreparation()) {
+          this.prepare(connection);
+        } else {
+          connection.query(this.text);
+        }
+        return null;
+      }
+      hasBeenParsed(connection) {
+        return this.name && connection.parsedStatements[this.name];
+      }
+      handlePortalSuspended(connection) {
+        this._getRows(connection, this.rows);
+      }
+      _getRows(connection, rows) {
+        connection.execute({
+          portal: this.portal,
+          rows
+        });
+        if (!rows) {
+          connection.sync();
+        } else {
+          connection.flush();
+        }
+      }
+      // http://developer.postgresql.org/pgdocs/postgres/protocol-flow.html#PROTOCOL-FLOW-EXT-QUERY
+      prepare(connection) {
+        this.isPreparedStatement = true;
+        if (!this.hasBeenParsed(connection)) {
+          connection.parse({
+            text: this.text,
+            name: this.name,
+            types: this.types
+          });
+        }
+        try {
+          connection.bind({
+            portal: this.portal,
+            statement: this.name,
+            values: this.values,
+            binary: this.binary,
+            valueMapper: utils.prepareValue
+          });
+        } catch (err) {
+          this.handleError(err, connection);
+          return;
+        }
+        connection.describe({
+          type: "P",
+          name: this.portal || ""
+        });
+        this._getRows(connection, this.rows);
+      }
+      handleCopyInResponse(connection) {
+        connection.sendCopyFail("No source stream defined");
+      }
+      // eslint-disable-next-line no-unused-vars
+      handleCopyData(msg, connection) {
+      }
+    };
+    module2.exports = Query;
+  }
+});
+
+// node_modules/pg-protocol/dist/messages.js
+var require_messages = __commonJS({
+  "node_modules/pg-protocol/dist/messages.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.NoticeMessage = exports2.DataRowMessage = exports2.CommandCompleteMessage = exports2.ReadyForQueryMessage = exports2.NotificationResponseMessage = exports2.BackendKeyDataMessage = exports2.AuthenticationMD5Password = exports2.ParameterStatusMessage = exports2.ParameterDescriptionMessage = exports2.RowDescriptionMessage = exports2.Field = exports2.CopyResponse = exports2.CopyDataMessage = exports2.DatabaseError = exports2.copyDone = exports2.emptyQuery = exports2.replicationStart = exports2.portalSuspended = exports2.noData = exports2.closeComplete = exports2.bindComplete = exports2.parseComplete = void 0;
+    exports2.parseComplete = {
+      name: "parseComplete",
+      length: 5
+    };
+    exports2.bindComplete = {
+      name: "bindComplete",
+      length: 5
+    };
+    exports2.closeComplete = {
+      name: "closeComplete",
+      length: 5
+    };
+    exports2.noData = {
+      name: "noData",
+      length: 5
+    };
+    exports2.portalSuspended = {
+      name: "portalSuspended",
+      length: 5
+    };
+    exports2.replicationStart = {
+      name: "replicationStart",
+      length: 4
+    };
+    exports2.emptyQuery = {
+      name: "emptyQuery",
+      length: 4
+    };
+    exports2.copyDone = {
+      name: "copyDone",
+      length: 4
+    };
+    var DatabaseError = class extends Error {
+      constructor(message, length, name) {
+        super(message);
+        this.length = length;
+        this.name = name;
+      }
+    };
+    exports2.DatabaseError = DatabaseError;
+    var CopyDataMessage = class {
+      constructor(length, chunk) {
+        this.length = length;
+        this.chunk = chunk;
+        this.name = "copyData";
+      }
+    };
+    exports2.CopyDataMessage = CopyDataMessage;
+    var CopyResponse = class {
+      constructor(length, name, binary, columnCount) {
+        this.length = length;
+        this.name = name;
+        this.binary = binary;
+        this.columnTypes = new Array(columnCount);
+      }
+    };
+    exports2.CopyResponse = CopyResponse;
+    var Field = class {
+      constructor(name, tableID, columnID, dataTypeID, dataTypeSize, dataTypeModifier, format) {
+        this.name = name;
+        this.tableID = tableID;
+        this.columnID = columnID;
+        this.dataTypeID = dataTypeID;
+        this.dataTypeSize = dataTypeSize;
+        this.dataTypeModifier = dataTypeModifier;
+        this.format = format;
+      }
+    };
+    exports2.Field = Field;
+    var RowDescriptionMessage = class {
+      constructor(length, fieldCount) {
+        this.length = length;
+        this.fieldCount = fieldCount;
+        this.name = "rowDescription";
+        this.fields = new Array(this.fieldCount);
+      }
+    };
+    exports2.RowDescriptionMessage = RowDescriptionMessage;
+    var ParameterDescriptionMessage = class {
+      constructor(length, parameterCount) {
+        this.length = length;
+        this.parameterCount = parameterCount;
+        this.name = "parameterDescription";
+        this.dataTypeIDs = new Array(this.parameterCount);
+      }
+    };
+    exports2.ParameterDescriptionMessage = ParameterDescriptionMessage;
+    var ParameterStatusMessage = class {
+      constructor(length, parameterName, parameterValue) {
+        this.length = length;
+        this.parameterName = parameterName;
+        this.parameterValue = parameterValue;
+        this.name = "parameterStatus";
+      }
+    };
+    exports2.ParameterStatusMessage = ParameterStatusMessage;
+    var AuthenticationMD5Password = class {
+      constructor(length, salt) {
+        this.length = length;
+        this.salt = salt;
+        this.name = "authenticationMD5Password";
+      }
+    };
+    exports2.AuthenticationMD5Password = AuthenticationMD5Password;
+    var BackendKeyDataMessage = class {
+      constructor(length, processID, secretKey) {
+        this.length = length;
+        this.processID = processID;
+        this.secretKey = secretKey;
+        this.name = "backendKeyData";
+      }
+    };
+    exports2.BackendKeyDataMessage = BackendKeyDataMessage;
+    var NotificationResponseMessage = class {
+      constructor(length, processId, channel, payload) {
+        this.length = length;
+        this.processId = processId;
+        this.channel = channel;
+        this.payload = payload;
+        this.name = "notification";
+      }
+    };
+    exports2.NotificationResponseMessage = NotificationResponseMessage;
+    var ReadyForQueryMessage = class {
+      constructor(length, status) {
+        this.length = length;
+        this.status = status;
+        this.name = "readyForQuery";
+      }
+    };
+    exports2.ReadyForQueryMessage = ReadyForQueryMessage;
+    var CommandCompleteMessage = class {
+      constructor(length, text) {
+        this.length = length;
+        this.text = text;
+        this.name = "commandComplete";
+      }
+    };
+    exports2.CommandCompleteMessage = CommandCompleteMessage;
+    var DataRowMessage = class {
+      constructor(length, fields) {
+        this.length = length;
+        this.fields = fields;
+        this.name = "dataRow";
+        this.fieldCount = fields.length;
+      }
+    };
+    exports2.DataRowMessage = DataRowMessage;
+    var NoticeMessage = class {
+      constructor(length, message) {
+        this.length = length;
+        this.message = message;
+        this.name = "notice";
+      }
+    };
+    exports2.NoticeMessage = NoticeMessage;
+  }
+});
+
+// node_modules/pg-protocol/dist/buffer-writer.js
+var require_buffer_writer = __commonJS({
+  "node_modules/pg-protocol/dist/buffer-writer.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.Writer = void 0;
+    var Writer = class {
+      constructor(size = 256) {
+        this.size = size;
+        this.offset = 5;
+        this.headerPosition = 0;
+        this.buffer = Buffer.allocUnsafe(size);
+      }
+      ensure(size) {
+        var remaining = this.buffer.length - this.offset;
+        if (remaining < size) {
+          var oldBuffer = this.buffer;
+          var newSize = oldBuffer.length + (oldBuffer.length >> 1) + size;
+          this.buffer = Buffer.allocUnsafe(newSize);
+          oldBuffer.copy(this.buffer);
+        }
+      }
+      addInt32(num) {
+        this.ensure(4);
+        this.buffer[this.offset++] = num >>> 24 & 255;
+        this.buffer[this.offset++] = num >>> 16 & 255;
+        this.buffer[this.offset++] = num >>> 8 & 255;
+        this.buffer[this.offset++] = num >>> 0 & 255;
+        return this;
+      }
+      addInt16(num) {
+        this.ensure(2);
+        this.buffer[this.offset++] = num >>> 8 & 255;
+        this.buffer[this.offset++] = num >>> 0 & 255;
+        return this;
+      }
+      addCString(string) {
+        if (!string) {
+          this.ensure(1);
+        } else {
+          var len = Buffer.byteLength(string);
+          this.ensure(len + 1);
+          this.buffer.write(string, this.offset, "utf-8");
+          this.offset += len;
+        }
+        this.buffer[this.offset++] = 0;
+        return this;
+      }
+      addString(string = "") {
+        var len = Buffer.byteLength(string);
+        this.ensure(len);
+        this.buffer.write(string, this.offset);
+        this.offset += len;
+        return this;
+      }
+      add(otherBuffer) {
+        this.ensure(otherBuffer.length);
+        otherBuffer.copy(this.buffer, this.offset);
+        this.offset += otherBuffer.length;
+        return this;
+      }
+      join(code) {
+        if (code) {
+          this.buffer[this.headerPosition] = code;
+          const length = this.offset - (this.headerPosition + 1);
+          this.buffer.writeInt32BE(length, this.headerPosition + 1);
+        }
+        return this.buffer.slice(code ? 0 : 5, this.offset);
+      }
+      flush(code) {
+        var result = this.join(code);
+        this.offset = 5;
+        this.headerPosition = 0;
+        this.buffer = Buffer.allocUnsafe(this.size);
+        return result;
+      }
+    };
+    exports2.Writer = Writer;
+  }
+});
+
+// node_modules/pg-protocol/dist/serializer.js
+var require_serializer = __commonJS({
+  "node_modules/pg-protocol/dist/serializer.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.serialize = void 0;
+    var buffer_writer_1 = require_buffer_writer();
+    var writer = new buffer_writer_1.Writer();
+    var startup = (opts) => {
+      writer.addInt16(3).addInt16(0);
+      for (const key of Object.keys(opts)) {
+        writer.addCString(key).addCString(opts[key]);
+      }
+      writer.addCString("client_encoding").addCString("UTF8");
+      var bodyBuffer = writer.addCString("").flush();
+      var length = bodyBuffer.length + 4;
+      return new buffer_writer_1.Writer().addInt32(length).add(bodyBuffer).flush();
+    };
+    var requestSsl = () => {
+      const response = Buffer.allocUnsafe(8);
+      response.writeInt32BE(8, 0);
+      response.writeInt32BE(80877103, 4);
+      return response;
+    };
+    var password = (password2) => {
+      return writer.addCString(password2).flush(
+        112
+        /* startup */
+      );
+    };
+    var sendSASLInitialResponseMessage = function(mechanism, initialResponse) {
+      writer.addCString(mechanism).addInt32(Buffer.byteLength(initialResponse)).addString(initialResponse);
+      return writer.flush(
+        112
+        /* startup */
+      );
+    };
+    var sendSCRAMClientFinalMessage = function(additionalData) {
+      return writer.addString(additionalData).flush(
+        112
+        /* startup */
+      );
+    };
+    var query = (text) => {
+      return writer.addCString(text).flush(
+        81
+        /* query */
+      );
+    };
+    var emptyArray = [];
+    var parse = (query2) => {
+      const name = query2.name || "";
+      if (name.length > 63) {
+        console.error("Warning! Postgres only supports 63 characters for query names.");
+        console.error("You supplied %s (%s)", name, name.length);
+        console.error("This can cause conflicts and silent errors executing queries");
+      }
+      const types = query2.types || emptyArray;
+      var len = types.length;
+      var buffer = writer.addCString(name).addCString(query2.text).addInt16(len);
+      for (var i = 0; i < len; i++) {
+        buffer.addInt32(types[i]);
+      }
+      return writer.flush(
+        80
+        /* parse */
+      );
+    };
+    var paramWriter = new buffer_writer_1.Writer();
+    var writeValues = function(values, valueMapper) {
+      for (let i = 0; i < values.length; i++) {
+        const mappedVal = valueMapper ? valueMapper(values[i], i) : values[i];
+        if (mappedVal == null) {
+          writer.addInt16(
+            0
+            /* STRING */
+          );
+          paramWriter.addInt32(-1);
+        } else if (mappedVal instanceof Buffer) {
+          writer.addInt16(
+            1
+            /* BINARY */
+          );
+          paramWriter.addInt32(mappedVal.length);
+          paramWriter.add(mappedVal);
+        } else {
+          writer.addInt16(
+            0
+            /* STRING */
+          );
+          paramWriter.addInt32(Buffer.byteLength(mappedVal));
+          paramWriter.addString(mappedVal);
+        }
+      }
+    };
+    var bind = (config2 = {}) => {
+      const portal = config2.portal || "";
+      const statement = config2.statement || "";
+      const binary = config2.binary || false;
+      const values = config2.values || emptyArray;
+      const len = values.length;
+      writer.addCString(portal).addCString(statement);
+      writer.addInt16(len);
+      writeValues(values, config2.valueMapper);
+      writer.addInt16(len);
+      writer.add(paramWriter.flush());
+      writer.addInt16(
+        binary ? 1 : 0
+        /* STRING */
+      );
+      return writer.flush(
+        66
+        /* bind */
+      );
+    };
+    var emptyExecute = Buffer.from([69, 0, 0, 0, 9, 0, 0, 0, 0, 0]);
+    var execute = (config2) => {
+      if (!config2 || !config2.portal && !config2.rows) {
+        return emptyExecute;
+      }
+      const portal = config2.portal || "";
+      const rows = config2.rows || 0;
+      const portalLength = Buffer.byteLength(portal);
+      const len = 4 + portalLength + 1 + 4;
+      const buff = Buffer.allocUnsafe(1 + len);
+      buff[0] = 69;
+      buff.writeInt32BE(len, 1);
+      buff.write(portal, 5, "utf-8");
+      buff[portalLength + 5] = 0;
+      buff.writeUInt32BE(rows, buff.length - 4);
+      return buff;
+    };
+    var cancel = (processID, secretKey) => {
+      const buffer = Buffer.allocUnsafe(16);
+      buffer.writeInt32BE(16, 0);
+      buffer.writeInt16BE(1234, 4);
+      buffer.writeInt16BE(5678, 6);
+      buffer.writeInt32BE(processID, 8);
+      buffer.writeInt32BE(secretKey, 12);
+      return buffer;
+    };
+    var cstringMessage = (code, string) => {
+      const stringLen = Buffer.byteLength(string);
+      const len = 4 + stringLen + 1;
+      const buffer = Buffer.allocUnsafe(1 + len);
+      buffer[0] = code;
+      buffer.writeInt32BE(len, 1);
+      buffer.write(string, 5, "utf-8");
+      buffer[len] = 0;
+      return buffer;
+    };
+    var emptyDescribePortal = writer.addCString("P").flush(
+      68
+      /* describe */
+    );
+    var emptyDescribeStatement = writer.addCString("S").flush(
+      68
+      /* describe */
+    );
+    var describe = (msg) => {
+      return msg.name ? cstringMessage(68, `${msg.type}${msg.name || ""}`) : msg.type === "P" ? emptyDescribePortal : emptyDescribeStatement;
+    };
+    var close = (msg) => {
+      const text = `${msg.type}${msg.name || ""}`;
+      return cstringMessage(67, text);
+    };
+    var copyData = (chunk) => {
+      return writer.add(chunk).flush(
+        100
+        /* copyFromChunk */
+      );
+    };
+    var copyFail = (message) => {
+      return cstringMessage(102, message);
+    };
+    var codeOnlyBuffer = (code) => Buffer.from([code, 0, 0, 0, 4]);
+    var flushBuffer = codeOnlyBuffer(
+      72
+      /* flush */
+    );
+    var syncBuffer = codeOnlyBuffer(
+      83
+      /* sync */
+    );
+    var endBuffer = codeOnlyBuffer(
+      88
+      /* end */
+    );
+    var copyDoneBuffer = codeOnlyBuffer(
+      99
+      /* copyDone */
+    );
+    var serialize = {
+      startup,
+      password,
+      requestSsl,
+      sendSASLInitialResponseMessage,
+      sendSCRAMClientFinalMessage,
+      query,
+      parse,
+      bind,
+      execute,
+      describe,
+      close,
+      flush: () => flushBuffer,
+      sync: () => syncBuffer,
+      end: () => endBuffer,
+      copyData,
+      copyDone: () => copyDoneBuffer,
+      copyFail,
+      cancel
+    };
+    exports2.serialize = serialize;
+  }
+});
+
+// node_modules/pg-protocol/dist/buffer-reader.js
+var require_buffer_reader = __commonJS({
+  "node_modules/pg-protocol/dist/buffer-reader.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.BufferReader = void 0;
+    var emptyBuffer = Buffer.allocUnsafe(0);
+    var BufferReader = class {
+      constructor(offset = 0) {
+        this.offset = offset;
+        this.buffer = emptyBuffer;
+        this.encoding = "utf-8";
+      }
+      setBuffer(offset, buffer) {
+        this.offset = offset;
+        this.buffer = buffer;
+      }
+      int16() {
+        const result = this.buffer.readInt16BE(this.offset);
+        this.offset += 2;
+        return result;
+      }
+      byte() {
+        const result = this.buffer[this.offset];
+        this.offset++;
+        return result;
+      }
+      int32() {
+        const result = this.buffer.readInt32BE(this.offset);
+        this.offset += 4;
+        return result;
+      }
+      string(length) {
+        const result = this.buffer.toString(this.encoding, this.offset, this.offset + length);
+        this.offset += length;
+        return result;
+      }
+      cstring() {
+        const start = this.offset;
+        let end = start;
+        while (this.buffer[end++] !== 0) {
+        }
+        this.offset = end;
+        return this.buffer.toString(this.encoding, start, end - 1);
+      }
+      bytes(length) {
+        const result = this.buffer.slice(this.offset, this.offset + length);
+        this.offset += length;
+        return result;
+      }
+    };
+    exports2.BufferReader = BufferReader;
+  }
+});
+
+// node_modules/pg-protocol/dist/parser.js
+var require_parser = __commonJS({
+  "node_modules/pg-protocol/dist/parser.js"(exports2) {
+    "use strict";
+    var __importDefault = exports2 && exports2.__importDefault || function(mod) {
+      return mod && mod.__esModule ? mod : { "default": mod };
+    };
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.Parser = void 0;
+    var messages_1 = require_messages();
+    var buffer_reader_1 = require_buffer_reader();
+    var assert_1 = __importDefault(require("assert"));
+    var CODE_LENGTH = 1;
+    var LEN_LENGTH = 4;
+    var HEADER_LENGTH = CODE_LENGTH + LEN_LENGTH;
+    var emptyBuffer = Buffer.allocUnsafe(0);
+    var Parser = class {
+      constructor(opts) {
+        this.buffer = emptyBuffer;
+        this.bufferLength = 0;
+        this.bufferOffset = 0;
+        this.reader = new buffer_reader_1.BufferReader();
+        if ((opts === null || opts === void 0 ? void 0 : opts.mode) === "binary") {
+          throw new Error("Binary mode not supported yet");
+        }
+        this.mode = (opts === null || opts === void 0 ? void 0 : opts.mode) || "text";
+      }
+      parse(buffer, callback) {
+        this.mergeBuffer(buffer);
+        const bufferFullLength = this.bufferOffset + this.bufferLength;
+        let offset = this.bufferOffset;
+        while (offset + HEADER_LENGTH <= bufferFullLength) {
+          const code = this.buffer[offset];
+          const length = this.buffer.readUInt32BE(offset + CODE_LENGTH);
+          const fullMessageLength = CODE_LENGTH + length;
+          if (fullMessageLength + offset <= bufferFullLength) {
+            const message = this.handlePacket(offset + HEADER_LENGTH, code, length, this.buffer);
+            callback(message);
+            offset += fullMessageLength;
+          } else {
+            break;
+          }
+        }
+        if (offset === bufferFullLength) {
+          this.buffer = emptyBuffer;
+          this.bufferLength = 0;
+          this.bufferOffset = 0;
+        } else {
+          this.bufferLength = bufferFullLength - offset;
+          this.bufferOffset = offset;
+        }
+      }
+      mergeBuffer(buffer) {
+        if (this.bufferLength > 0) {
+          const newLength = this.bufferLength + buffer.byteLength;
+          const newFullLength = newLength + this.bufferOffset;
+          if (newFullLength > this.buffer.byteLength) {
+            let newBuffer;
+            if (newLength <= this.buffer.byteLength && this.bufferOffset >= this.bufferLength) {
+              newBuffer = this.buffer;
+            } else {
+              let newBufferLength = this.buffer.byteLength * 2;
+              while (newLength >= newBufferLength) {
+                newBufferLength *= 2;
+              }
+              newBuffer = Buffer.allocUnsafe(newBufferLength);
+            }
+            this.buffer.copy(newBuffer, 0, this.bufferOffset, this.bufferOffset + this.bufferLength);
+            this.buffer = newBuffer;
+            this.bufferOffset = 0;
+          }
+          buffer.copy(this.buffer, this.bufferOffset + this.bufferLength);
+          this.bufferLength = newLength;
+        } else {
+          this.buffer = buffer;
+          this.bufferOffset = 0;
+          this.bufferLength = buffer.byteLength;
+        }
+      }
+      handlePacket(offset, code, length, bytes) {
+        switch (code) {
+          case 50:
+            return messages_1.bindComplete;
+          case 49:
+            return messages_1.parseComplete;
+          case 51:
+            return messages_1.closeComplete;
+          case 110:
+            return messages_1.noData;
+          case 115:
+            return messages_1.portalSuspended;
+          case 99:
+            return messages_1.copyDone;
+          case 87:
+            return messages_1.replicationStart;
+          case 73:
+            return messages_1.emptyQuery;
+          case 68:
+            return this.parseDataRowMessage(offset, length, bytes);
+          case 67:
+            return this.parseCommandCompleteMessage(offset, length, bytes);
+          case 90:
+            return this.parseReadyForQueryMessage(offset, length, bytes);
+          case 65:
+            return this.parseNotificationMessage(offset, length, bytes);
+          case 82:
+            return this.parseAuthenticationResponse(offset, length, bytes);
+          case 83:
+            return this.parseParameterStatusMessage(offset, length, bytes);
+          case 75:
+            return this.parseBackendKeyData(offset, length, bytes);
+          case 69:
+            return this.parseErrorMessage(offset, length, bytes, "error");
+          case 78:
+            return this.parseErrorMessage(offset, length, bytes, "notice");
+          case 84:
+            return this.parseRowDescriptionMessage(offset, length, bytes);
+          case 116:
+            return this.parseParameterDescriptionMessage(offset, length, bytes);
+          case 71:
+            return this.parseCopyInMessage(offset, length, bytes);
+          case 72:
+            return this.parseCopyOutMessage(offset, length, bytes);
+          case 100:
+            return this.parseCopyData(offset, length, bytes);
+          default:
+            assert_1.default.fail(`unknown message code: ${code.toString(16)}`);
+        }
+      }
+      parseReadyForQueryMessage(offset, length, bytes) {
+        this.reader.setBuffer(offset, bytes);
+        const status = this.reader.string(1);
+        return new messages_1.ReadyForQueryMessage(length, status);
+      }
+      parseCommandCompleteMessage(offset, length, bytes) {
+        this.reader.setBuffer(offset, bytes);
+        const text = this.reader.cstring();
+        return new messages_1.CommandCompleteMessage(length, text);
+      }
+      parseCopyData(offset, length, bytes) {
+        const chunk = bytes.slice(offset, offset + (length - 4));
+        return new messages_1.CopyDataMessage(length, chunk);
+      }
+      parseCopyInMessage(offset, length, bytes) {
+        return this.parseCopyMessage(offset, length, bytes, "copyInResponse");
+      }
+      parseCopyOutMessage(offset, length, bytes) {
+        return this.parseCopyMessage(offset, length, bytes, "copyOutResponse");
+      }
+      parseCopyMessage(offset, length, bytes, messageName) {
+        this.reader.setBuffer(offset, bytes);
+        const isBinary = this.reader.byte() !== 0;
+        const columnCount = this.reader.int16();
+        const message = new messages_1.CopyResponse(length, messageName, isBinary, columnCount);
+        for (let i = 0; i < columnCount; i++) {
+          message.columnTypes[i] = this.reader.int16();
+        }
+        return message;
+      }
+      parseNotificationMessage(offset, length, bytes) {
+        this.reader.setBuffer(offset, bytes);
+        const processId = this.reader.int32();
+        const channel = this.reader.cstring();
+        const payload = this.reader.cstring();
+        return new messages_1.NotificationResponseMessage(length, processId, channel, payload);
+      }
+      parseRowDescriptionMessage(offset, length, bytes) {
+        this.reader.setBuffer(offset, bytes);
+        const fieldCount = this.reader.int16();
+        const message = new messages_1.RowDescriptionMessage(length, fieldCount);
+        for (let i = 0; i < fieldCount; i++) {
+          message.fields[i] = this.parseField();
+        }
+        return message;
+      }
+      parseField() {
+        const name = this.reader.cstring();
+        const tableID = this.reader.int32();
+        const columnID = this.reader.int16();
+        const dataTypeID = this.reader.int32();
+        const dataTypeSize = this.reader.int16();
+        const dataTypeModifier = this.reader.int32();
+        const mode = this.reader.int16() === 0 ? "text" : "binary";
+        return new messages_1.Field(name, tableID, columnID, dataTypeID, dataTypeSize, dataTypeModifier, mode);
+      }
+      parseParameterDescriptionMessage(offset, length, bytes) {
+        this.reader.setBuffer(offset, bytes);
+        const parameterCount = this.reader.int16();
+        const message = new messages_1.ParameterDescriptionMessage(length, parameterCount);
+        for (let i = 0; i < parameterCount; i++) {
+          message.dataTypeIDs[i] = this.reader.int32();
+        }
+        return message;
+      }
+      parseDataRowMessage(offset, length, bytes) {
+        this.reader.setBuffer(offset, bytes);
+        const fieldCount = this.reader.int16();
+        const fields = new Array(fieldCount);
+        for (let i = 0; i < fieldCount; i++) {
+          const len = this.reader.int32();
+          fields[i] = len === -1 ? null : this.reader.string(len);
+        }
+        return new messages_1.DataRowMessage(length, fields);
+      }
+      parseParameterStatusMessage(offset, length, bytes) {
+        this.reader.setBuffer(offset, bytes);
+        const name = this.reader.cstring();
+        const value = this.reader.cstring();
+        return new messages_1.ParameterStatusMessage(length, name, value);
+      }
+      parseBackendKeyData(offset, length, bytes) {
+        this.reader.setBuffer(offset, bytes);
+        const processID = this.reader.int32();
+        const secretKey = this.reader.int32();
+        return new messages_1.BackendKeyDataMessage(length, processID, secretKey);
+      }
+      parseAuthenticationResponse(offset, length, bytes) {
+        this.reader.setBuffer(offset, bytes);
+        const code = this.reader.int32();
+        const message = {
+          name: "authenticationOk",
+          length
+        };
+        switch (code) {
+          case 0:
+            break;
+          case 3:
+            if (message.length === 8) {
+              message.name = "authenticationCleartextPassword";
+            }
+            break;
+          case 5:
+            if (message.length === 12) {
+              message.name = "authenticationMD5Password";
+              const salt = this.reader.bytes(4);
+              return new messages_1.AuthenticationMD5Password(length, salt);
+            }
+            break;
+          case 10:
+            message.name = "authenticationSASL";
+            message.mechanisms = [];
+            let mechanism;
+            do {
+              mechanism = this.reader.cstring();
+              if (mechanism) {
+                message.mechanisms.push(mechanism);
+              }
+            } while (mechanism);
+            break;
+          case 11:
+            message.name = "authenticationSASLContinue";
+            message.data = this.reader.string(length - 8);
+            break;
+          case 12:
+            message.name = "authenticationSASLFinal";
+            message.data = this.reader.string(length - 8);
+            break;
+          default:
+            throw new Error("Unknown authenticationOk message type " + code);
+        }
+        return message;
+      }
+      parseErrorMessage(offset, length, bytes, name) {
+        this.reader.setBuffer(offset, bytes);
+        const fields = {};
+        let fieldType = this.reader.string(1);
+        while (fieldType !== "\0") {
+          fields[fieldType] = this.reader.cstring();
+          fieldType = this.reader.string(1);
+        }
+        const messageValue = fields.M;
+        const message = name === "notice" ? new messages_1.NoticeMessage(length, messageValue) : new messages_1.DatabaseError(messageValue, length, name);
+        message.severity = fields.S;
+        message.code = fields.C;
+        message.detail = fields.D;
+        message.hint = fields.H;
+        message.position = fields.P;
+        message.internalPosition = fields.p;
+        message.internalQuery = fields.q;
+        message.where = fields.W;
+        message.schema = fields.s;
+        message.table = fields.t;
+        message.column = fields.c;
+        message.dataType = fields.d;
+        message.constraint = fields.n;
+        message.file = fields.F;
+        message.line = fields.L;
+        message.routine = fields.R;
+        return message;
+      }
+    };
+    exports2.Parser = Parser;
+  }
+});
+
+// node_modules/pg-protocol/dist/index.js
+var require_dist = __commonJS({
+  "node_modules/pg-protocol/dist/index.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.DatabaseError = exports2.serialize = exports2.parse = void 0;
+    var messages_1 = require_messages();
+    Object.defineProperty(exports2, "DatabaseError", { enumerable: true, get: function() {
+      return messages_1.DatabaseError;
+    } });
+    var serializer_1 = require_serializer();
+    Object.defineProperty(exports2, "serialize", { enumerable: true, get: function() {
+      return serializer_1.serialize;
+    } });
+    var parser_1 = require_parser();
+    function parse(stream, callback) {
+      const parser = new parser_1.Parser();
+      stream.on("data", (buffer) => parser.parse(buffer, callback));
+      return new Promise((resolve) => stream.on("end", () => resolve()));
+    }
+    exports2.parse = parse;
+  }
+});
+
+// node_modules/pg-cloudflare/dist/empty.js
+var empty_exports = {};
+__export(empty_exports, {
+  default: () => empty_default
+});
+var empty_default;
+var init_empty = __esm({
+  "node_modules/pg-cloudflare/dist/empty.js"() {
+    empty_default = {};
+  }
+});
+
+// node_modules/pg/lib/stream.js
+var require_stream = __commonJS({
+  "node_modules/pg/lib/stream.js"(exports2, module2) {
+    module2.exports.getStream = function getStream(ssl) {
+      const net = require("net");
+      if (typeof net.Socket === "function") {
+        return new net.Socket();
+      } else {
+        const { CloudflareSocket } = (init_empty(), __toCommonJS(empty_exports));
+        return new CloudflareSocket(ssl);
+      }
+    };
+    module2.exports.getSecureStream = function getSecureStream(options) {
+      var tls = require("tls");
+      if (tls.connect) {
+        return tls.connect(options);
+      } else {
+        options.socket.startTls(options);
+        return options.socket;
+      }
+    };
+  }
+});
+
+// node_modules/pg/lib/connection.js
+var require_connection = __commonJS({
+  "node_modules/pg/lib/connection.js"(exports2, module2) {
+    "use strict";
+    var net = require("net");
+    var EventEmitter2 = require("events").EventEmitter;
+    var { parse, serialize } = require_dist();
+    var { getStream, getSecureStream } = require_stream();
+    var flushBuffer = serialize.flush();
+    var syncBuffer = serialize.sync();
+    var endBuffer = serialize.end();
+    var Connection = class extends EventEmitter2 {
+      constructor(config2) {
+        super();
+        config2 = config2 || {};
+        this.stream = config2.stream || getStream(config2.ssl);
+        if (typeof this.stream === "function") {
+          this.stream = this.stream(config2);
+        }
+        this._keepAlive = config2.keepAlive;
+        this._keepAliveInitialDelayMillis = config2.keepAliveInitialDelayMillis;
+        this.lastBuffer = false;
+        this.parsedStatements = {};
+        this.ssl = config2.ssl || false;
+        this._ending = false;
+        this._emitMessage = false;
+        var self = this;
+        this.on("newListener", function(eventName) {
+          if (eventName === "message") {
+            self._emitMessage = true;
+          }
+        });
+      }
+      connect(port, host) {
+        var self = this;
+        this._connecting = true;
+        this.stream.setNoDelay(true);
+        this.stream.connect(port, host);
+        this.stream.once("connect", function() {
+          if (self._keepAlive) {
+            self.stream.setKeepAlive(true, self._keepAliveInitialDelayMillis);
+          }
+          self.emit("connect");
+        });
+        const reportStreamError = function(error) {
+          if (self._ending && (error.code === "ECONNRESET" || error.code === "EPIPE")) {
+            return;
+          }
+          self.emit("error", error);
+        };
+        this.stream.on("error", reportStreamError);
+        this.stream.on("close", function() {
+          self.emit("end");
+        });
+        if (!this.ssl) {
+          return this.attachListeners(this.stream);
+        }
+        this.stream.once("data", function(buffer) {
+          var responseCode = buffer.toString("utf8");
+          switch (responseCode) {
+            case "S":
+              break;
+            case "N":
+              self.stream.end();
+              return self.emit("error", new Error("The server does not support SSL connections"));
+            default:
+              self.stream.end();
+              return self.emit("error", new Error("There was an error establishing an SSL connection"));
+          }
+          const options = {
+            socket: self.stream
+          };
+          if (self.ssl !== true) {
+            Object.assign(options, self.ssl);
+            if ("key" in self.ssl) {
+              options.key = self.ssl.key;
+            }
+          }
+          var net2 = require("net");
+          if (net2.isIP && net2.isIP(host) === 0) {
+            options.servername = host;
+          }
+          try {
+            self.stream = getSecureStream(options);
+          } catch (err) {
+            return self.emit("error", err);
+          }
+          self.attachListeners(self.stream);
+          self.stream.on("error", reportStreamError);
+          self.emit("sslconnect");
+        });
+      }
+      attachListeners(stream) {
+        parse(stream, (msg) => {
+          var eventName = msg.name === "error" ? "errorMessage" : msg.name;
+          if (this._emitMessage) {
+            this.emit("message", msg);
+          }
+          this.emit(eventName, msg);
+        });
+      }
+      requestSsl() {
+        this.stream.write(serialize.requestSsl());
+      }
+      startup(config2) {
+        this.stream.write(serialize.startup(config2));
+      }
+      cancel(processID, secretKey) {
+        this._send(serialize.cancel(processID, secretKey));
+      }
+      password(password) {
+        this._send(serialize.password(password));
+      }
+      sendSASLInitialResponseMessage(mechanism, initialResponse) {
+        this._send(serialize.sendSASLInitialResponseMessage(mechanism, initialResponse));
+      }
+      sendSCRAMClientFinalMessage(additionalData) {
+        this._send(serialize.sendSCRAMClientFinalMessage(additionalData));
+      }
+      _send(buffer) {
+        if (!this.stream.writable) {
+          return false;
+        }
+        return this.stream.write(buffer);
+      }
+      query(text) {
+        this._send(serialize.query(text));
+      }
+      // send parse message
+      parse(query) {
+        this._send(serialize.parse(query));
+      }
+      // send bind message
+      bind(config2) {
+        this._send(serialize.bind(config2));
+      }
+      // send execute message
+      execute(config2) {
+        this._send(serialize.execute(config2));
+      }
+      flush() {
+        if (this.stream.writable) {
+          this.stream.write(flushBuffer);
+        }
+      }
+      sync() {
+        this._ending = true;
+        this._send(syncBuffer);
+      }
+      ref() {
+        this.stream.ref();
+      }
+      unref() {
+        this.stream.unref();
+      }
+      end() {
+        this._ending = true;
+        if (!this._connecting || !this.stream.writable) {
+          this.stream.end();
+          return;
+        }
+        return this.stream.write(endBuffer, () => {
+          this.stream.end();
+        });
+      }
+      close(msg) {
+        this._send(serialize.close(msg));
+      }
+      describe(msg) {
+        this._send(serialize.describe(msg));
+      }
+      sendCopyFromChunk(chunk) {
+        this._send(serialize.copyData(chunk));
+      }
+      endCopyFrom() {
+        this._send(serialize.copyDone());
+      }
+      sendCopyFail(msg) {
+        this._send(serialize.copyFail(msg));
+      }
+    };
+    module2.exports = Connection;
+  }
+});
+
+// node_modules/split2/index.js
+var require_split2 = __commonJS({
+  "node_modules/split2/index.js"(exports2, module2) {
+    "use strict";
+    var { Transform } = require("stream");
+    var { StringDecoder } = require("string_decoder");
+    var kLast = Symbol("last");
+    var kDecoder = Symbol("decoder");
+    function transform(chunk, enc, cb) {
+      let list;
+      if (this.overflow) {
+        const buf = this[kDecoder].write(chunk);
+        list = buf.split(this.matcher);
+        if (list.length === 1)
+          return cb();
+        list.shift();
+        this.overflow = false;
+      } else {
+        this[kLast] += this[kDecoder].write(chunk);
+        list = this[kLast].split(this.matcher);
+      }
+      this[kLast] = list.pop();
+      for (let i = 0; i < list.length; i++) {
+        try {
+          push(this, this.mapper(list[i]));
+        } catch (error) {
+          return cb(error);
+        }
+      }
+      this.overflow = this[kLast].length > this.maxLength;
+      if (this.overflow && !this.skipOverflow) {
+        cb(new Error("maximum buffer reached"));
+        return;
+      }
+      cb();
+    }
+    function flush(cb) {
+      this[kLast] += this[kDecoder].end();
+      if (this[kLast]) {
+        try {
+          push(this, this.mapper(this[kLast]));
+        } catch (error) {
+          return cb(error);
+        }
+      }
+      cb();
+    }
+    function push(self, val) {
+      if (val !== void 0) {
+        self.push(val);
+      }
+    }
+    function noop(incoming) {
+      return incoming;
+    }
+    function split(matcher, mapper, options) {
+      matcher = matcher || /\r?\n/;
+      mapper = mapper || noop;
+      options = options || {};
+      switch (arguments.length) {
+        case 1:
+          if (typeof matcher === "function") {
+            mapper = matcher;
+            matcher = /\r?\n/;
+          } else if (typeof matcher === "object" && !(matcher instanceof RegExp) && !matcher[Symbol.split]) {
+            options = matcher;
+            matcher = /\r?\n/;
+          }
+          break;
+        case 2:
+          if (typeof matcher === "function") {
+            options = mapper;
+            mapper = matcher;
+            matcher = /\r?\n/;
+          } else if (typeof mapper === "object") {
+            options = mapper;
+            mapper = noop;
+          }
+      }
+      options = Object.assign({}, options);
+      options.autoDestroy = true;
+      options.transform = transform;
+      options.flush = flush;
+      options.readableObjectMode = true;
+      const stream = new Transform(options);
+      stream[kLast] = "";
+      stream[kDecoder] = new StringDecoder("utf8");
+      stream.matcher = matcher;
+      stream.mapper = mapper;
+      stream.maxLength = options.maxLength;
+      stream.skipOverflow = options.skipOverflow || false;
+      stream.overflow = false;
+      stream._destroy = function(err, cb) {
+        this._writableState.errorEmitted = false;
+        cb(err);
+      };
+      return stream;
+    }
+    module2.exports = split;
+  }
+});
+
+// node_modules/pgpass/lib/helper.js
+var require_helper = __commonJS({
+  "node_modules/pgpass/lib/helper.js"(exports2, module2) {
+    "use strict";
+    var path = require("path");
+    var Stream = require("stream").Stream;
+    var split = require_split2();
+    var util = require("util");
+    var defaultPort = 5432;
+    var isWin = process.platform === "win32";
+    var warnStream = process.stderr;
+    var S_IRWXG = 56;
+    var S_IRWXO = 7;
+    var S_IFMT = 61440;
+    var S_IFREG = 32768;
+    function isRegFile(mode) {
+      return (mode & S_IFMT) == S_IFREG;
+    }
+    var fieldNames = ["host", "port", "database", "user", "password"];
+    var nrOfFields = fieldNames.length;
+    var passKey = fieldNames[nrOfFields - 1];
+    function warn() {
+      var isWritable = warnStream instanceof Stream && true === warnStream.writable;
+      if (isWritable) {
+        var args = Array.prototype.slice.call(arguments).concat("\n");
+        warnStream.write(util.format.apply(util, args));
+      }
+    }
+    Object.defineProperty(module2.exports, "isWin", {
+      get: function() {
+        return isWin;
+      },
+      set: function(val) {
+        isWin = val;
+      }
+    });
+    module2.exports.warnTo = function(stream) {
+      var old = warnStream;
+      warnStream = stream;
+      return old;
+    };
+    module2.exports.getFileName = function(rawEnv) {
+      var env = rawEnv || process.env;
+      var file = env.PGPASSFILE || (isWin ? path.join(env.APPDATA || "./", "postgresql", "pgpass.conf") : path.join(env.HOME || "./", ".pgpass"));
+      return file;
+    };
+    module2.exports.usePgPass = function(stats, fname) {
+      if (Object.prototype.hasOwnProperty.call(process.env, "PGPASSWORD")) {
+        return false;
+      }
+      if (isWin) {
+        return true;
+      }
+      fname = fname || "<unkn>";
+      if (!isRegFile(stats.mode)) {
+        warn('WARNING: password file "%s" is not a plain file', fname);
+        return false;
+      }
+      if (stats.mode & (S_IRWXG | S_IRWXO)) {
+        warn('WARNING: password file "%s" has group or world access; permissions should be u=rw (0600) or less', fname);
+        return false;
+      }
+      return true;
+    };
+    var matcher = module2.exports.match = function(connInfo, entry) {
+      return fieldNames.slice(0, -1).reduce(function(prev, field, idx) {
+        if (idx == 1) {
+          if (Number(connInfo[field] || defaultPort) === Number(entry[field])) {
+            return prev && true;
+          }
+        }
+        return prev && (entry[field] === "*" || entry[field] === connInfo[field]);
+      }, true);
+    };
+    module2.exports.getPassword = function(connInfo, stream, cb) {
+      var pass;
+      var lineStream = stream.pipe(split());
+      function onLine(line) {
+        var entry = parseLine(line);
+        if (entry && isValidEntry(entry) && matcher(connInfo, entry)) {
+          pass = entry[passKey];
+          lineStream.end();
+        }
+      }
+      var onEnd = function() {
+        stream.destroy();
+        cb(pass);
+      };
+      var onErr = function(err) {
+        stream.destroy();
+        warn("WARNING: error on reading file: %s", err);
+        cb(void 0);
+      };
+      stream.on("error", onErr);
+      lineStream.on("data", onLine).on("end", onEnd).on("error", onErr);
+    };
+    var parseLine = module2.exports.parseLine = function(line) {
+      if (line.length < 11 || line.match(/^\s+#/)) {
+        return null;
+      }
+      var curChar = "";
+      var prevChar = "";
+      var fieldIdx = 0;
+      var startIdx = 0;
+      var endIdx = 0;
+      var obj = {};
+      var isLastField = false;
+      var addToObj = function(idx, i0, i1) {
+        var field = line.substring(i0, i1);
+        if (!Object.hasOwnProperty.call(process.env, "PGPASS_NO_DEESCAPE")) {
+          field = field.replace(/\\([:\\])/g, "$1");
+        }
+        obj[fieldNames[idx]] = field;
+      };
+      for (var i = 0; i < line.length - 1; i += 1) {
+        curChar = line.charAt(i + 1);
+        prevChar = line.charAt(i);
+        isLastField = fieldIdx == nrOfFields - 1;
+        if (isLastField) {
+          addToObj(fieldIdx, startIdx);
+          break;
+        }
+        if (i >= 0 && curChar == ":" && prevChar !== "\\") {
+          addToObj(fieldIdx, startIdx, i + 1);
+          startIdx = i + 2;
+          fieldIdx += 1;
+        }
+      }
+      obj = Object.keys(obj).length === nrOfFields ? obj : null;
+      return obj;
+    };
+    var isValidEntry = module2.exports.isValidEntry = function(entry) {
+      var rules = {
+        // host
+        0: function(x) {
+          return x.length > 0;
+        },
+        // port
+        1: function(x) {
+          if (x === "*") {
+            return true;
+          }
+          x = Number(x);
+          return isFinite(x) && x > 0 && x < 9007199254740992 && Math.floor(x) === x;
+        },
+        // database
+        2: function(x) {
+          return x.length > 0;
+        },
+        // username
+        3: function(x) {
+          return x.length > 0;
+        },
+        // password
+        4: function(x) {
+          return x.length > 0;
+        }
+      };
+      for (var idx = 0; idx < fieldNames.length; idx += 1) {
+        var rule = rules[idx];
+        var value = entry[fieldNames[idx]] || "";
+        var res = rule(value);
+        if (!res) {
+          return false;
+        }
+      }
+      return true;
+    };
+  }
+});
+
+// node_modules/pgpass/lib/index.js
+var require_lib = __commonJS({
+  "node_modules/pgpass/lib/index.js"(exports2, module2) {
+    "use strict";
+    var path = require("path");
+    var fs = require("fs");
+    var helper = require_helper();
+    module2.exports = function(connInfo, cb) {
+      var file = helper.getFileName();
+      fs.stat(file, function(err, stat) {
+        if (err || !helper.usePgPass(stat, file)) {
+          return cb(void 0);
+        }
+        var st = fs.createReadStream(file);
+        helper.getPassword(connInfo, st, cb);
+      });
+    };
+    module2.exports.warnTo = helper.warnTo;
+  }
+});
+
+// node_modules/pg/lib/client.js
+var require_client = __commonJS({
+  "node_modules/pg/lib/client.js"(exports2, module2) {
+    "use strict";
+    var EventEmitter2 = require("events").EventEmitter;
+    var utils = require_utils();
+    var sasl = require_sasl();
+    var TypeOverrides = require_type_overrides();
+    var ConnectionParameters = require_connection_parameters();
+    var Query = require_query();
+    var defaults = require_defaults();
+    var Connection = require_connection();
+    var crypto = require_utils2();
+    var Client2 = class extends EventEmitter2 {
+      constructor(config2) {
+        super();
+        this.connectionParameters = new ConnectionParameters(config2);
+        this.user = this.connectionParameters.user;
+        this.database = this.connectionParameters.database;
+        this.port = this.connectionParameters.port;
+        this.host = this.connectionParameters.host;
+        Object.defineProperty(this, "password", {
+          configurable: true,
+          enumerable: false,
+          writable: true,
+          value: this.connectionParameters.password
+        });
+        this.replication = this.connectionParameters.replication;
+        var c = config2 || {};
+        this._Promise = c.Promise || global.Promise;
+        this._types = new TypeOverrides(c.types);
+        this._ending = false;
+        this._ended = false;
+        this._connecting = false;
+        this._connected = false;
+        this._connectionError = false;
+        this._queryable = true;
+        this.connection = c.connection || new Connection({
+          stream: c.stream,
+          ssl: this.connectionParameters.ssl,
+          keepAlive: c.keepAlive || false,
+          keepAliveInitialDelayMillis: c.keepAliveInitialDelayMillis || 0,
+          encoding: this.connectionParameters.client_encoding || "utf8"
+        });
+        this.queryQueue = [];
+        this.binary = c.binary || defaults.binary;
+        this.processID = null;
+        this.secretKey = null;
+        this.ssl = this.connectionParameters.ssl || false;
+        if (this.ssl && this.ssl.key) {
+          Object.defineProperty(this.ssl, "key", {
+            enumerable: false
+          });
+        }
+        this._connectionTimeoutMillis = c.connectionTimeoutMillis || 0;
+      }
+      _errorAllQueries(err) {
+        const enqueueError = (query) => {
+          process.nextTick(() => {
+            query.handleError(err, this.connection);
+          });
+        };
+        if (this.activeQuery) {
+          enqueueError(this.activeQuery);
+          this.activeQuery = null;
+        }
+        this.queryQueue.forEach(enqueueError);
+        this.queryQueue.length = 0;
+      }
+      _connect(callback) {
+        var self = this;
+        var con = this.connection;
+        this._connectionCallback = callback;
+        if (this._connecting || this._connected) {
+          const err = new Error("Client has already been connected. You cannot reuse a client.");
+          process.nextTick(() => {
+            callback(err);
+          });
+          return;
+        }
+        this._connecting = true;
+        this.connectionTimeoutHandle;
+        if (this._connectionTimeoutMillis > 0) {
+          this.connectionTimeoutHandle = setTimeout(() => {
+            con._ending = true;
+            con.stream.destroy(new Error("timeout expired"));
+          }, this._connectionTimeoutMillis);
+        }
+        if (this.host && this.host.indexOf("/") === 0) {
+          con.connect(this.host + "/.s.PGSQL." + this.port);
+        } else {
+          con.connect(this.port, this.host);
+        }
+        con.on("connect", function() {
+          if (self.ssl) {
+            con.requestSsl();
+          } else {
+            con.startup(self.getStartupConf());
+          }
+        });
+        con.on("sslconnect", function() {
+          con.startup(self.getStartupConf());
+        });
+        this._attachListeners(con);
+        con.once("end", () => {
+          const error = this._ending ? new Error("Connection terminated") : new Error("Connection terminated unexpectedly");
+          clearTimeout(this.connectionTimeoutHandle);
+          this._errorAllQueries(error);
+          this._ended = true;
+          if (!this._ending) {
+            if (this._connecting && !this._connectionError) {
+              if (this._connectionCallback) {
+                this._connectionCallback(error);
+              } else {
+                this._handleErrorEvent(error);
+              }
+            } else if (!this._connectionError) {
+              this._handleErrorEvent(error);
+            }
+          }
+          process.nextTick(() => {
+            this.emit("end");
+          });
+        });
+      }
+      connect(callback) {
+        if (callback) {
+          this._connect(callback);
+          return;
+        }
+        return new this._Promise((resolve, reject) => {
+          this._connect((error) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve();
+            }
+          });
+        });
+      }
+      _attachListeners(con) {
+        con.on("authenticationCleartextPassword", this._handleAuthCleartextPassword.bind(this));
+        con.on("authenticationMD5Password", this._handleAuthMD5Password.bind(this));
+        con.on("authenticationSASL", this._handleAuthSASL.bind(this));
+        con.on("authenticationSASLContinue", this._handleAuthSASLContinue.bind(this));
+        con.on("authenticationSASLFinal", this._handleAuthSASLFinal.bind(this));
+        con.on("backendKeyData", this._handleBackendKeyData.bind(this));
+        con.on("error", this._handleErrorEvent.bind(this));
+        con.on("errorMessage", this._handleErrorMessage.bind(this));
+        con.on("readyForQuery", this._handleReadyForQuery.bind(this));
+        con.on("notice", this._handleNotice.bind(this));
+        con.on("rowDescription", this._handleRowDescription.bind(this));
+        con.on("dataRow", this._handleDataRow.bind(this));
+        con.on("portalSuspended", this._handlePortalSuspended.bind(this));
+        con.on("emptyQuery", this._handleEmptyQuery.bind(this));
+        con.on("commandComplete", this._handleCommandComplete.bind(this));
+        con.on("parseComplete", this._handleParseComplete.bind(this));
+        con.on("copyInResponse", this._handleCopyInResponse.bind(this));
+        con.on("copyData", this._handleCopyData.bind(this));
+        con.on("notification", this._handleNotification.bind(this));
+      }
+      // TODO(bmc): deprecate pgpass "built in" integration since this.password can be a function
+      // it can be supplied by the user if required - this is a breaking change!
+      _checkPgPass(cb) {
+        const con = this.connection;
+        if (typeof this.password === "function") {
+          this._Promise.resolve().then(() => this.password()).then((pass) => {
+            if (pass !== void 0) {
+              if (typeof pass !== "string") {
+                con.emit("error", new TypeError("Password must be a string"));
+                return;
+              }
+              this.connectionParameters.password = this.password = pass;
+            } else {
+              this.connectionParameters.password = this.password = null;
+            }
+            cb();
+          }).catch((err) => {
+            con.emit("error", err);
+          });
+        } else if (this.password !== null) {
+          cb();
+        } else {
+          try {
+            const pgPass = require_lib();
+            pgPass(this.connectionParameters, (pass) => {
+              if (void 0 !== pass) {
+                this.connectionParameters.password = this.password = pass;
+              }
+              cb();
+            });
+          } catch (e) {
+            this.emit("error", e);
+          }
+        }
+      }
+      _handleAuthCleartextPassword(msg) {
+        this._checkPgPass(() => {
+          this.connection.password(this.password);
+        });
+      }
+      _handleAuthMD5Password(msg) {
+        this._checkPgPass(async () => {
+          try {
+            const hashedPassword = await crypto.postgresMd5PasswordHash(this.user, this.password, msg.salt);
+            this.connection.password(hashedPassword);
+          } catch (e) {
+            this.emit("error", e);
+          }
+        });
+      }
+      _handleAuthSASL(msg) {
+        this._checkPgPass(() => {
+          try {
+            this.saslSession = sasl.startSession(msg.mechanisms);
+            this.connection.sendSASLInitialResponseMessage(this.saslSession.mechanism, this.saslSession.response);
+          } catch (err) {
+            this.connection.emit("error", err);
+          }
+        });
+      }
+      async _handleAuthSASLContinue(msg) {
+        try {
+          await sasl.continueSession(this.saslSession, this.password, msg.data);
+          this.connection.sendSCRAMClientFinalMessage(this.saslSession.response);
+        } catch (err) {
+          this.connection.emit("error", err);
+        }
+      }
+      _handleAuthSASLFinal(msg) {
+        try {
+          sasl.finalizeSession(this.saslSession, msg.data);
+          this.saslSession = null;
+        } catch (err) {
+          this.connection.emit("error", err);
+        }
+      }
+      _handleBackendKeyData(msg) {
+        this.processID = msg.processID;
+        this.secretKey = msg.secretKey;
+      }
+      _handleReadyForQuery(msg) {
+        if (this._connecting) {
+          this._connecting = false;
+          this._connected = true;
+          clearTimeout(this.connectionTimeoutHandle);
+          if (this._connectionCallback) {
+            this._connectionCallback(null, this);
+            this._connectionCallback = null;
+          }
+          this.emit("connect");
+        }
+        const { activeQuery } = this;
+        this.activeQuery = null;
+        this.readyForQuery = true;
+        if (activeQuery) {
+          activeQuery.handleReadyForQuery(this.connection);
+        }
+        this._pulseQueryQueue();
+      }
+      // if we receieve an error event or error message
+      // during the connection process we handle it here
+      _handleErrorWhileConnecting(err) {
+        if (this._connectionError) {
+          return;
+        }
+        this._connectionError = true;
+        clearTimeout(this.connectionTimeoutHandle);
+        if (this._connectionCallback) {
+          return this._connectionCallback(err);
+        }
+        this.emit("error", err);
+      }
+      // if we're connected and we receive an error event from the connection
+      // this means the socket is dead - do a hard abort of all queries and emit
+      // the socket error on the client as well
+      _handleErrorEvent(err) {
+        if (this._connecting) {
+          return this._handleErrorWhileConnecting(err);
+        }
+        this._queryable = false;
+        this._errorAllQueries(err);
+        this.emit("error", err);
+      }
+      // handle error messages from the postgres backend
+      _handleErrorMessage(msg) {
+        if (this._connecting) {
+          return this._handleErrorWhileConnecting(msg);
+        }
+        const activeQuery = this.activeQuery;
+        if (!activeQuery) {
+          this._handleErrorEvent(msg);
+          return;
+        }
+        this.activeQuery = null;
+        activeQuery.handleError(msg, this.connection);
+      }
+      _handleRowDescription(msg) {
+        this.activeQuery.handleRowDescription(msg);
+      }
+      _handleDataRow(msg) {
+        this.activeQuery.handleDataRow(msg);
+      }
+      _handlePortalSuspended(msg) {
+        this.activeQuery.handlePortalSuspended(this.connection);
+      }
+      _handleEmptyQuery(msg) {
+        this.activeQuery.handleEmptyQuery(this.connection);
+      }
+      _handleCommandComplete(msg) {
+        this.activeQuery.handleCommandComplete(msg, this.connection);
+      }
+      _handleParseComplete(msg) {
+        if (this.activeQuery.name) {
+          this.connection.parsedStatements[this.activeQuery.name] = this.activeQuery.text;
+        }
+      }
+      _handleCopyInResponse(msg) {
+        this.activeQuery.handleCopyInResponse(this.connection);
+      }
+      _handleCopyData(msg) {
+        this.activeQuery.handleCopyData(msg, this.connection);
+      }
+      _handleNotification(msg) {
+        this.emit("notification", msg);
+      }
+      _handleNotice(msg) {
+        this.emit("notice", msg);
+      }
+      getStartupConf() {
+        var params = this.connectionParameters;
+        var data = {
+          user: params.user,
+          database: params.database
+        };
+        var appName = params.application_name || params.fallback_application_name;
+        if (appName) {
+          data.application_name = appName;
+        }
+        if (params.replication) {
+          data.replication = "" + params.replication;
+        }
+        if (params.statement_timeout) {
+          data.statement_timeout = String(parseInt(params.statement_timeout, 10));
+        }
+        if (params.lock_timeout) {
+          data.lock_timeout = String(parseInt(params.lock_timeout, 10));
+        }
+        if (params.idle_in_transaction_session_timeout) {
+          data.idle_in_transaction_session_timeout = String(parseInt(params.idle_in_transaction_session_timeout, 10));
+        }
+        if (params.options) {
+          data.options = params.options;
+        }
+        return data;
+      }
+      cancel(client, query) {
+        if (client.activeQuery === query) {
+          var con = this.connection;
+          if (this.host && this.host.indexOf("/") === 0) {
+            con.connect(this.host + "/.s.PGSQL." + this.port);
+          } else {
+            con.connect(this.port, this.host);
+          }
+          con.on("connect", function() {
+            con.cancel(client.processID, client.secretKey);
+          });
+        } else if (client.queryQueue.indexOf(query) !== -1) {
+          client.queryQueue.splice(client.queryQueue.indexOf(query), 1);
+        }
+      }
+      setTypeParser(oid, format, parseFn) {
+        return this._types.setTypeParser(oid, format, parseFn);
+      }
+      getTypeParser(oid, format) {
+        return this._types.getTypeParser(oid, format);
+      }
+      // escapeIdentifier and escapeLiteral moved to utility functions & exported
+      // on PG
+      // re-exported here for backwards compatibility
+      escapeIdentifier(str) {
+        return utils.escapeIdentifier(str);
+      }
+      escapeLiteral(str) {
+        return utils.escapeLiteral(str);
+      }
+      _pulseQueryQueue() {
+        if (this.readyForQuery === true) {
+          this.activeQuery = this.queryQueue.shift();
+          if (this.activeQuery) {
+            this.readyForQuery = false;
+            this.hasExecuted = true;
+            const queryError = this.activeQuery.submit(this.connection);
+            if (queryError) {
+              process.nextTick(() => {
+                this.activeQuery.handleError(queryError, this.connection);
+                this.readyForQuery = true;
+                this._pulseQueryQueue();
+              });
+            }
+          } else if (this.hasExecuted) {
+            this.activeQuery = null;
+            this.emit("drain");
+          }
+        }
+      }
+      query(config2, values, callback) {
+        var query;
+        var result;
+        var readTimeout;
+        var readTimeoutTimer;
+        var queryCallback;
+        if (config2 === null || config2 === void 0) {
+          throw new TypeError("Client was passed a null or undefined query");
+        } else if (typeof config2.submit === "function") {
+          readTimeout = config2.query_timeout || this.connectionParameters.query_timeout;
+          result = query = config2;
+          if (typeof values === "function") {
+            query.callback = query.callback || values;
+          }
+        } else {
+          readTimeout = this.connectionParameters.query_timeout;
+          query = new Query(config2, values, callback);
+          if (!query.callback) {
+            result = new this._Promise((resolve, reject) => {
+              query.callback = (err, res) => err ? reject(err) : resolve(res);
+            }).catch((err) => {
+              Error.captureStackTrace(err);
+              throw err;
+            });
+          }
+        }
+        if (readTimeout) {
+          queryCallback = query.callback;
+          readTimeoutTimer = setTimeout(() => {
+            var error = new Error("Query read timeout");
+            process.nextTick(() => {
+              query.handleError(error, this.connection);
+            });
+            queryCallback(error);
+            query.callback = () => {
+            };
+            var index = this.queryQueue.indexOf(query);
+            if (index > -1) {
+              this.queryQueue.splice(index, 1);
+            }
+            this._pulseQueryQueue();
+          }, readTimeout);
+          query.callback = (err, res) => {
+            clearTimeout(readTimeoutTimer);
+            queryCallback(err, res);
+          };
+        }
+        if (this.binary && !query.binary) {
+          query.binary = true;
+        }
+        if (query._result && !query._result._types) {
+          query._result._types = this._types;
+        }
+        if (!this._queryable) {
+          process.nextTick(() => {
+            query.handleError(new Error("Client has encountered a connection error and is not queryable"), this.connection);
+          });
+          return result;
+        }
+        if (this._ending) {
+          process.nextTick(() => {
+            query.handleError(new Error("Client was closed and is not queryable"), this.connection);
+          });
+          return result;
+        }
+        this.queryQueue.push(query);
+        this._pulseQueryQueue();
+        return result;
+      }
+      ref() {
+        this.connection.ref();
+      }
+      unref() {
+        this.connection.unref();
+      }
+      end(cb) {
+        this._ending = true;
+        if (!this.connection._connecting || this._ended) {
+          if (cb) {
+            cb();
+          } else {
+            return this._Promise.resolve();
+          }
+        }
+        if (this.activeQuery || !this._queryable) {
+          this.connection.stream.destroy();
+        } else {
+          this.connection.end();
+        }
+        if (cb) {
+          this.connection.once("end", cb);
+        } else {
+          return new this._Promise((resolve) => {
+            this.connection.once("end", resolve);
+          });
+        }
+      }
+    };
+    Client2.Query = Query;
+    module2.exports = Client2;
+  }
+});
+
+// node_modules/pg-pool/index.js
+var require_pg_pool = __commonJS({
+  "node_modules/pg-pool/index.js"(exports2, module2) {
+    "use strict";
+    var EventEmitter2 = require("events").EventEmitter;
+    var NOOP = function() {
+    };
+    var removeWhere = (list, predicate) => {
+      const i = list.findIndex(predicate);
+      return i === -1 ? void 0 : list.splice(i, 1)[0];
+    };
+    var IdleItem = class {
+      constructor(client, idleListener, timeoutId) {
+        this.client = client;
+        this.idleListener = idleListener;
+        this.timeoutId = timeoutId;
+      }
+    };
+    var PendingItem = class {
+      constructor(callback) {
+        this.callback = callback;
+      }
+    };
+    function throwOnDoubleRelease() {
+      throw new Error("Release called on client which has already been released to the pool.");
+    }
+    function promisify(Promise2, callback) {
+      if (callback) {
+        return { callback, result: void 0 };
+      }
+      let rej;
+      let res;
+      const cb = function(err, client) {
+        err ? rej(err) : res(client);
+      };
+      const result = new Promise2(function(resolve, reject) {
+        res = resolve;
+        rej = reject;
+      }).catch((err) => {
+        Error.captureStackTrace(err);
+        throw err;
+      });
+      return { callback: cb, result };
+    }
+    function makeIdleListener(pool2, client) {
+      return function idleListener(err) {
+        err.client = client;
+        client.removeListener("error", idleListener);
+        client.on("error", () => {
+          pool2.log("additional client error after disconnection due to error", err);
+        });
+        pool2._remove(client);
+        pool2.emit("error", err, client);
+      };
+    }
+    var Pool2 = class extends EventEmitter2 {
+      constructor(options, Client2) {
+        super();
+        this.options = Object.assign({}, options);
+        if (options != null && "password" in options) {
+          Object.defineProperty(this.options, "password", {
+            configurable: true,
+            enumerable: false,
+            writable: true,
+            value: options.password
+          });
+        }
+        if (options != null && options.ssl && options.ssl.key) {
+          Object.defineProperty(this.options.ssl, "key", {
+            enumerable: false
+          });
+        }
+        this.options.max = this.options.max || this.options.poolSize || 10;
+        this.options.maxUses = this.options.maxUses || Infinity;
+        this.options.allowExitOnIdle = this.options.allowExitOnIdle || false;
+        this.options.maxLifetimeSeconds = this.options.maxLifetimeSeconds || 0;
+        this.log = this.options.log || function() {
+        };
+        this.Client = this.options.Client || Client2 || require_lib2().Client;
+        this.Promise = this.options.Promise || global.Promise;
+        if (typeof this.options.idleTimeoutMillis === "undefined") {
+          this.options.idleTimeoutMillis = 1e4;
+        }
+        this._clients = [];
+        this._idle = [];
+        this._expired = /* @__PURE__ */ new WeakSet();
+        this._pendingQueue = [];
+        this._endCallback = void 0;
+        this.ending = false;
+        this.ended = false;
+      }
+      _isFull() {
+        return this._clients.length >= this.options.max;
+      }
+      _pulseQueue() {
+        this.log("pulse queue");
+        if (this.ended) {
+          this.log("pulse queue ended");
+          return;
+        }
+        if (this.ending) {
+          this.log("pulse queue on ending");
+          if (this._idle.length) {
+            this._idle.slice().map((item) => {
+              this._remove(item.client);
+            });
+          }
+          if (!this._clients.length) {
+            this.ended = true;
+            this._endCallback();
+          }
+          return;
+        }
+        if (!this._pendingQueue.length) {
+          this.log("no queued requests");
+          return;
+        }
+        if (!this._idle.length && this._isFull()) {
+          return;
+        }
+        const pendingItem = this._pendingQueue.shift();
+        if (this._idle.length) {
+          const idleItem = this._idle.pop();
+          clearTimeout(idleItem.timeoutId);
+          const client = idleItem.client;
+          client.ref && client.ref();
+          const idleListener = idleItem.idleListener;
+          return this._acquireClient(client, pendingItem, idleListener, false);
+        }
+        if (!this._isFull()) {
+          return this.newClient(pendingItem);
+        }
+        throw new Error("unexpected condition");
+      }
+      _remove(client) {
+        const removed = removeWhere(this._idle, (item) => item.client === client);
+        if (removed !== void 0) {
+          clearTimeout(removed.timeoutId);
+        }
+        this._clients = this._clients.filter((c) => c !== client);
+        client.end();
+        this.emit("remove", client);
+      }
+      connect(cb) {
+        if (this.ending) {
+          const err = new Error("Cannot use a pool after calling end on the pool");
+          return cb ? cb(err) : this.Promise.reject(err);
+        }
+        const response = promisify(this.Promise, cb);
+        const result = response.result;
+        if (this._isFull() || this._idle.length) {
+          if (this._idle.length) {
+            process.nextTick(() => this._pulseQueue());
+          }
+          if (!this.options.connectionTimeoutMillis) {
+            this._pendingQueue.push(new PendingItem(response.callback));
+            return result;
+          }
+          const queueCallback = (err, res, done) => {
+            clearTimeout(tid);
+            response.callback(err, res, done);
+          };
+          const pendingItem = new PendingItem(queueCallback);
+          const tid = setTimeout(() => {
+            removeWhere(this._pendingQueue, (i) => i.callback === queueCallback);
+            pendingItem.timedOut = true;
+            response.callback(new Error("timeout exceeded when trying to connect"));
+          }, this.options.connectionTimeoutMillis);
+          this._pendingQueue.push(pendingItem);
+          return result;
+        }
+        this.newClient(new PendingItem(response.callback));
+        return result;
+      }
+      newClient(pendingItem) {
+        const client = new this.Client(this.options);
+        this._clients.push(client);
+        const idleListener = makeIdleListener(this, client);
+        this.log("checking client timeout");
+        let tid;
+        let timeoutHit = false;
+        if (this.options.connectionTimeoutMillis) {
+          tid = setTimeout(() => {
+            this.log("ending client due to timeout");
+            timeoutHit = true;
+            client.connection ? client.connection.stream.destroy() : client.end();
+          }, this.options.connectionTimeoutMillis);
+        }
+        this.log("connecting new client");
+        client.connect((err) => {
+          if (tid) {
+            clearTimeout(tid);
+          }
+          client.on("error", idleListener);
+          if (err) {
+            this.log("client failed to connect", err);
+            this._clients = this._clients.filter((c) => c !== client);
+            if (timeoutHit) {
+              err.message = "Connection terminated due to connection timeout";
+            }
+            this._pulseQueue();
+            if (!pendingItem.timedOut) {
+              pendingItem.callback(err, void 0, NOOP);
+            }
+          } else {
+            this.log("new client connected");
+            if (this.options.maxLifetimeSeconds !== 0) {
+              const maxLifetimeTimeout = setTimeout(() => {
+                this.log("ending client due to expired lifetime");
+                this._expired.add(client);
+                const idleIndex = this._idle.findIndex((idleItem) => idleItem.client === client);
+                if (idleIndex !== -1) {
+                  this._acquireClient(
+                    client,
+                    new PendingItem((err2, client2, clientRelease) => clientRelease()),
+                    idleListener,
+                    false
+                  );
+                }
+              }, this.options.maxLifetimeSeconds * 1e3);
+              maxLifetimeTimeout.unref();
+              client.once("end", () => clearTimeout(maxLifetimeTimeout));
+            }
+            return this._acquireClient(client, pendingItem, idleListener, true);
+          }
+        });
+      }
+      // acquire a client for a pending work item
+      _acquireClient(client, pendingItem, idleListener, isNew) {
+        if (isNew) {
+          this.emit("connect", client);
+        }
+        this.emit("acquire", client);
+        client.release = this._releaseOnce(client, idleListener);
+        client.removeListener("error", idleListener);
+        if (!pendingItem.timedOut) {
+          if (isNew && this.options.verify) {
+            this.options.verify(client, (err) => {
+              if (err) {
+                client.release(err);
+                return pendingItem.callback(err, void 0, NOOP);
+              }
+              pendingItem.callback(void 0, client, client.release);
+            });
+          } else {
+            pendingItem.callback(void 0, client, client.release);
+          }
+        } else {
+          if (isNew && this.options.verify) {
+            this.options.verify(client, client.release);
+          } else {
+            client.release();
+          }
+        }
+      }
+      // returns a function that wraps _release and throws if called more than once
+      _releaseOnce(client, idleListener) {
+        let released = false;
+        return (err) => {
+          if (released) {
+            throwOnDoubleRelease();
+          }
+          released = true;
+          this._release(client, idleListener, err);
+        };
+      }
+      // release a client back to the poll, include an error
+      // to remove it from the pool
+      _release(client, idleListener, err) {
+        client.on("error", idleListener);
+        client._poolUseCount = (client._poolUseCount || 0) + 1;
+        this.emit("release", err, client);
+        if (err || this.ending || !client._queryable || client._ending || client._poolUseCount >= this.options.maxUses) {
+          if (client._poolUseCount >= this.options.maxUses) {
+            this.log("remove expended client");
+          }
+          this._remove(client);
+          this._pulseQueue();
+          return;
+        }
+        const isExpired = this._expired.has(client);
+        if (isExpired) {
+          this.log("remove expired client");
+          this._expired.delete(client);
+          this._remove(client);
+          this._pulseQueue();
+          return;
+        }
+        let tid;
+        if (this.options.idleTimeoutMillis) {
+          tid = setTimeout(() => {
+            this.log("remove idle client");
+            this._remove(client);
+          }, this.options.idleTimeoutMillis);
+          if (this.options.allowExitOnIdle) {
+            tid.unref();
+          }
+        }
+        if (this.options.allowExitOnIdle) {
+          client.unref();
+        }
+        this._idle.push(new IdleItem(client, idleListener, tid));
+        this._pulseQueue();
+      }
+      query(text, values, cb) {
+        if (typeof text === "function") {
+          const response2 = promisify(this.Promise, text);
+          setImmediate(function() {
+            return response2.callback(new Error("Passing a function as the first parameter to pool.query is not supported"));
+          });
+          return response2.result;
+        }
+        if (typeof values === "function") {
+          cb = values;
+          values = void 0;
+        }
+        const response = promisify(this.Promise, cb);
+        cb = response.callback;
+        this.connect((err, client) => {
+          if (err) {
+            return cb(err);
+          }
+          let clientReleased = false;
+          const onError = (err2) => {
+            if (clientReleased) {
+              return;
+            }
+            clientReleased = true;
+            client.release(err2);
+            cb(err2);
+          };
+          client.once("error", onError);
+          this.log("dispatching query");
+          try {
+            client.query(text, values, (err2, res) => {
+              this.log("query dispatched");
+              client.removeListener("error", onError);
+              if (clientReleased) {
+                return;
+              }
+              clientReleased = true;
+              client.release(err2);
+              if (err2) {
+                return cb(err2);
+              }
+              return cb(void 0, res);
+            });
+          } catch (err2) {
+            client.release(err2);
+            return cb(err2);
+          }
+        });
+        return response.result;
+      }
+      end(cb) {
+        this.log("ending");
+        if (this.ending) {
+          const err = new Error("Called end on pool more than once");
+          return cb ? cb(err) : this.Promise.reject(err);
+        }
+        this.ending = true;
+        const promised = promisify(this.Promise, cb);
+        this._endCallback = promised.callback;
+        this._pulseQueue();
+        return promised.result;
+      }
+      get waitingCount() {
+        return this._pendingQueue.length;
+      }
+      get idleCount() {
+        return this._idle.length;
+      }
+      get expiredCount() {
+        return this._clients.reduce((acc, client) => acc + (this._expired.has(client) ? 1 : 0), 0);
+      }
+      get totalCount() {
+        return this._clients.length;
+      }
+    };
+    module2.exports = Pool2;
+  }
+});
+
+// node_modules/pg/lib/native/query.js
+var require_query2 = __commonJS({
+  "node_modules/pg/lib/native/query.js"(exports2, module2) {
+    "use strict";
+    var EventEmitter2 = require("events").EventEmitter;
+    var util = require("util");
+    var utils = require_utils();
+    var NativeQuery = module2.exports = function(config2, values, callback) {
+      EventEmitter2.call(this);
+      config2 = utils.normalizeQueryConfig(config2, values, callback);
+      this.text = config2.text;
+      this.values = config2.values;
+      this.name = config2.name;
+      this.callback = config2.callback;
+      this.state = "new";
+      this._arrayMode = config2.rowMode === "array";
+      this._emitRowEvents = false;
+      this.on(
+        "newListener",
+        function(event) {
+          if (event === "row")
+            this._emitRowEvents = true;
+        }.bind(this)
+      );
+    };
+    util.inherits(NativeQuery, EventEmitter2);
+    var errorFieldMap = {
+      /* eslint-disable quote-props */
+      sqlState: "code",
+      statementPosition: "position",
+      messagePrimary: "message",
+      context: "where",
+      schemaName: "schema",
+      tableName: "table",
+      columnName: "column",
+      dataTypeName: "dataType",
+      constraintName: "constraint",
+      sourceFile: "file",
+      sourceLine: "line",
+      sourceFunction: "routine"
+    };
+    NativeQuery.prototype.handleError = function(err) {
+      var fields = this.native.pq.resultErrorFields();
+      if (fields) {
+        for (var key in fields) {
+          var normalizedFieldName = errorFieldMap[key] || key;
+          err[normalizedFieldName] = fields[key];
+        }
+      }
+      if (this.callback) {
+        this.callback(err);
+      } else {
+        this.emit("error", err);
+      }
+      this.state = "error";
+    };
+    NativeQuery.prototype.then = function(onSuccess, onFailure) {
+      return this._getPromise().then(onSuccess, onFailure);
+    };
+    NativeQuery.prototype.catch = function(callback) {
+      return this._getPromise().catch(callback);
+    };
+    NativeQuery.prototype._getPromise = function() {
+      if (this._promise)
+        return this._promise;
+      this._promise = new Promise(
+        function(resolve, reject) {
+          this._once("end", resolve);
+          this._once("error", reject);
+        }.bind(this)
+      );
+      return this._promise;
+    };
+    NativeQuery.prototype.submit = function(client) {
+      this.state = "running";
+      var self = this;
+      this.native = client.native;
+      client.native.arrayMode = this._arrayMode;
+      var after = function(err, rows, results) {
+        client.native.arrayMode = false;
+        setImmediate(function() {
+          self.emit("_done");
+        });
+        if (err) {
+          return self.handleError(err);
+        }
+        if (self._emitRowEvents) {
+          if (results.length > 1) {
+            rows.forEach((rowOfRows, i) => {
+              rowOfRows.forEach((row) => {
+                self.emit("row", row, results[i]);
+              });
+            });
+          } else {
+            rows.forEach(function(row) {
+              self.emit("row", row, results);
+            });
+          }
+        }
+        self.state = "end";
+        self.emit("end", results);
+        if (self.callback) {
+          self.callback(null, results);
+        }
+      };
+      if (process.domain) {
+        after = process.domain.bind(after);
+      }
+      if (this.name) {
+        if (this.name.length > 63) {
+          console.error("Warning! Postgres only supports 63 characters for query names.");
+          console.error("You supplied %s (%s)", this.name, this.name.length);
+          console.error("This can cause conflicts and silent errors executing queries");
+        }
+        var values = (this.values || []).map(utils.prepareValue);
+        if (client.namedQueries[this.name]) {
+          if (this.text && client.namedQueries[this.name] !== this.text) {
+            const err = new Error(`Prepared statements must be unique - '${this.name}' was used for a different statement`);
+            return after(err);
+          }
+          return client.native.execute(this.name, values, after);
+        }
+        return client.native.prepare(this.name, this.text, values.length, function(err) {
+          if (err)
+            return after(err);
+          client.namedQueries[self.name] = self.text;
+          return self.native.execute(self.name, values, after);
+        });
+      } else if (this.values) {
+        if (!Array.isArray(this.values)) {
+          const err = new Error("Query values must be an array");
+          return after(err);
+        }
+        var vals = this.values.map(utils.prepareValue);
+        client.native.query(this.text, vals, after);
+      } else {
+        client.native.query(this.text, after);
+      }
+    };
+  }
+});
+
+// node_modules/pg/lib/native/client.js
+var require_client2 = __commonJS({
+  "node_modules/pg/lib/native/client.js"(exports2, module2) {
+    "use strict";
+    var Native;
+    try {
+      Native = require("pg-native");
+    } catch (e) {
+      throw e;
+    }
+    var TypeOverrides = require_type_overrides();
+    var EventEmitter2 = require("events").EventEmitter;
+    var util = require("util");
+    var ConnectionParameters = require_connection_parameters();
+    var NativeQuery = require_query2();
+    var Client2 = module2.exports = function(config2) {
+      EventEmitter2.call(this);
+      config2 = config2 || {};
+      this._Promise = config2.Promise || global.Promise;
+      this._types = new TypeOverrides(config2.types);
+      this.native = new Native({
+        types: this._types
+      });
+      this._queryQueue = [];
+      this._ending = false;
+      this._connecting = false;
+      this._connected = false;
+      this._queryable = true;
+      var cp = this.connectionParameters = new ConnectionParameters(config2);
+      if (config2.nativeConnectionString)
+        cp.nativeConnectionString = config2.nativeConnectionString;
+      this.user = cp.user;
+      Object.defineProperty(this, "password", {
+        configurable: true,
+        enumerable: false,
+        writable: true,
+        value: cp.password
+      });
+      this.database = cp.database;
+      this.host = cp.host;
+      this.port = cp.port;
+      this.namedQueries = {};
+    };
+    Client2.Query = NativeQuery;
+    util.inherits(Client2, EventEmitter2);
+    Client2.prototype._errorAllQueries = function(err) {
+      const enqueueError = (query) => {
+        process.nextTick(() => {
+          query.native = this.native;
+          query.handleError(err);
+        });
+      };
+      if (this._hasActiveQuery()) {
+        enqueueError(this._activeQuery);
+        this._activeQuery = null;
+      }
+      this._queryQueue.forEach(enqueueError);
+      this._queryQueue.length = 0;
+    };
+    Client2.prototype._connect = function(cb) {
+      var self = this;
+      if (this._connecting) {
+        process.nextTick(() => cb(new Error("Client has already been connected. You cannot reuse a client.")));
+        return;
+      }
+      this._connecting = true;
+      this.connectionParameters.getLibpqConnectionString(function(err, conString) {
+        if (self.connectionParameters.nativeConnectionString)
+          conString = self.connectionParameters.nativeConnectionString;
+        if (err)
+          return cb(err);
+        self.native.connect(conString, function(err2) {
+          if (err2) {
+            self.native.end();
+            return cb(err2);
+          }
+          self._connected = true;
+          self.native.on("error", function(err3) {
+            self._queryable = false;
+            self._errorAllQueries(err3);
+            self.emit("error", err3);
+          });
+          self.native.on("notification", function(msg) {
+            self.emit("notification", {
+              channel: msg.relname,
+              payload: msg.extra
+            });
+          });
+          self.emit("connect");
+          self._pulseQueryQueue(true);
+          cb();
+        });
+      });
+    };
+    Client2.prototype.connect = function(callback) {
+      if (callback) {
+        this._connect(callback);
+        return;
+      }
+      return new this._Promise((resolve, reject) => {
+        this._connect((error) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve();
+          }
+        });
+      });
+    };
+    Client2.prototype.query = function(config2, values, callback) {
+      var query;
+      var result;
+      var readTimeout;
+      var readTimeoutTimer;
+      var queryCallback;
+      if (config2 === null || config2 === void 0) {
+        throw new TypeError("Client was passed a null or undefined query");
+      } else if (typeof config2.submit === "function") {
+        readTimeout = config2.query_timeout || this.connectionParameters.query_timeout;
+        result = query = config2;
+        if (typeof values === "function") {
+          config2.callback = values;
+        }
+      } else {
+        readTimeout = this.connectionParameters.query_timeout;
+        query = new NativeQuery(config2, values, callback);
+        if (!query.callback) {
+          let resolveOut, rejectOut;
+          result = new this._Promise((resolve, reject) => {
+            resolveOut = resolve;
+            rejectOut = reject;
+          }).catch((err) => {
+            Error.captureStackTrace(err);
+            throw err;
+          });
+          query.callback = (err, res) => err ? rejectOut(err) : resolveOut(res);
+        }
+      }
+      if (readTimeout) {
+        queryCallback = query.callback;
+        readTimeoutTimer = setTimeout(() => {
+          var error = new Error("Query read timeout");
+          process.nextTick(() => {
+            query.handleError(error, this.connection);
+          });
+          queryCallback(error);
+          query.callback = () => {
+          };
+          var index = this._queryQueue.indexOf(query);
+          if (index > -1) {
+            this._queryQueue.splice(index, 1);
+          }
+          this._pulseQueryQueue();
+        }, readTimeout);
+        query.callback = (err, res) => {
+          clearTimeout(readTimeoutTimer);
+          queryCallback(err, res);
+        };
+      }
+      if (!this._queryable) {
+        query.native = this.native;
+        process.nextTick(() => {
+          query.handleError(new Error("Client has encountered a connection error and is not queryable"));
+        });
+        return result;
+      }
+      if (this._ending) {
+        query.native = this.native;
+        process.nextTick(() => {
+          query.handleError(new Error("Client was closed and is not queryable"));
+        });
+        return result;
+      }
+      this._queryQueue.push(query);
+      this._pulseQueryQueue();
+      return result;
+    };
+    Client2.prototype.end = function(cb) {
+      var self = this;
+      this._ending = true;
+      if (!this._connected) {
+        this.once("connect", this.end.bind(this, cb));
+      }
+      var result;
+      if (!cb) {
+        result = new this._Promise(function(resolve, reject) {
+          cb = (err) => err ? reject(err) : resolve();
+        });
+      }
+      this.native.end(function() {
+        self._errorAllQueries(new Error("Connection terminated"));
+        process.nextTick(() => {
+          self.emit("end");
+          if (cb)
+            cb();
+        });
+      });
+      return result;
+    };
+    Client2.prototype._hasActiveQuery = function() {
+      return this._activeQuery && this._activeQuery.state !== "error" && this._activeQuery.state !== "end";
+    };
+    Client2.prototype._pulseQueryQueue = function(initialConnection) {
+      if (!this._connected) {
+        return;
+      }
+      if (this._hasActiveQuery()) {
+        return;
+      }
+      var query = this._queryQueue.shift();
+      if (!query) {
+        if (!initialConnection) {
+          this.emit("drain");
+        }
+        return;
+      }
+      this._activeQuery = query;
+      query.submit(this);
+      var self = this;
+      query.once("_done", function() {
+        self._pulseQueryQueue();
+      });
+    };
+    Client2.prototype.cancel = function(query) {
+      if (this._activeQuery === query) {
+        this.native.cancel(function() {
+        });
+      } else if (this._queryQueue.indexOf(query) !== -1) {
+        this._queryQueue.splice(this._queryQueue.indexOf(query), 1);
+      }
+    };
+    Client2.prototype.ref = function() {
+    };
+    Client2.prototype.unref = function() {
+    };
+    Client2.prototype.setTypeParser = function(oid, format, parseFn) {
+      return this._types.setTypeParser(oid, format, parseFn);
+    };
+    Client2.prototype.getTypeParser = function(oid, format) {
+      return this._types.getTypeParser(oid, format);
+    };
+  }
+});
+
+// node_modules/pg/lib/native/index.js
+var require_native = __commonJS({
+  "node_modules/pg/lib/native/index.js"(exports2, module2) {
+    "use strict";
+    module2.exports = require_client2();
+  }
+});
+
+// node_modules/pg/lib/index.js
+var require_lib2 = __commonJS({
+  "node_modules/pg/lib/index.js"(exports2, module2) {
+    "use strict";
+    var Client2 = require_client();
+    var defaults = require_defaults();
+    var Connection = require_connection();
+    var Pool2 = require_pg_pool();
+    var { DatabaseError } = require_dist();
+    var { escapeIdentifier, escapeLiteral } = require_utils();
+    var poolFactory = (Client3) => {
+      return class BoundPool extends Pool2 {
+        constructor(options) {
+          super(options, Client3);
+        }
+      };
+    };
+    var PG = function(clientConstructor) {
+      this.defaults = defaults;
+      this.Client = clientConstructor;
+      this.Query = this.Client.Query;
+      this.Pool = poolFactory(this.Client);
+      this._pools = [];
+      this.Connection = Connection;
+      this.types = require_pg_types();
+      this.DatabaseError = DatabaseError;
+      this.escapeIdentifier = escapeIdentifier;
+      this.escapeLiteral = escapeLiteral;
+    };
+    if (typeof process.env.NODE_PG_FORCE_NATIVE !== "undefined") {
+      module2.exports = new PG(require_native());
+    } else {
+      module2.exports = new PG(Client2);
+      Object.defineProperty(module2.exports, "native", {
+        configurable: true,
+        enumerable: false,
+        get() {
+          var native = null;
+          try {
+            native = new PG(require_native());
+          } catch (err) {
+            if (err.code !== "MODULE_NOT_FOUND") {
+              throw err;
+            }
+          }
+          Object.defineProperty(module2.exports, "native", {
+            value: native
+          });
+          return native;
+        }
+      });
+    }
+  }
+});
+
+// src/extension.ts
+var extension_exports = {};
+__export(extension_exports, {
+  ErrorTreeItem: () => ErrorTreeItem,
+  ErrorsProvider: () => ErrorsProvider,
+  activate: () => activate,
+  deactivate: () => deactivate
+});
+module.exports = __toCommonJS(extension_exports);
+var vscode = __toESM(require("vscode"));
+var import_pg = __toESM(require_lib2());
+var notConfirmed\u0421riticalityDecoration;
+var low\u0421riticalityDecoration;
+var medium\u0421riticalityDecoration;
+var high\u0421riticalityDecoration;
+var critical\u0421riticalityDecoration;
+var unknown\u0421riticalityDecoration;
+var config = vscode.workspace.getConfiguration("threatscope");
+var pool = new import_pg.Pool({
+  user: config.get("DB.Login"),
+  host: config.get("DB.Host"),
+  database: config.get("DB.DataBase"),
+  password: config.get("DB.Password"),
+  port: config.get("DB.Port")
+});
+async function activate(context) {
+  context.subscriptions.push(vscode.commands.registerCommand(
+    "threatscope.activate",
+    (r) => vscode.window.showInformationMessage("Starting ThreatScope...")
+  ));
+  let data;
+  const changeSeverityCommand = "threatscope.changeSeverity";
+  const changeSeverityHandler = async (line, severity) => {
+    await changeSeverity(line, severity.replace(/_/g, " "));
+    data = await updateDBData(vscode.window.activeTextEditor?.document.uri.fsPath);
+    updateDecorators(data);
+    errorsProvider.refresh(data);
+  };
+  const changeStatusCommand = "threatscope.changeStatus";
+  const changeStatusHandler = async (line, status) => {
+    await changeStatus(line, status.replace(/_/g, " "));
+    data = await updateDBData(vscode.window.activeTextEditor?.document.uri.fsPath);
+    updateDecorators(data);
+    errorsProvider.refresh(data);
+  };
+  context.subscriptions.push(vscode.commands.registerCommand(changeSeverityCommand, changeSeverityHandler));
+  context.subscriptions.push(vscode.commands.registerCommand(changeStatusCommand, changeStatusHandler));
+  const errorsProvider = new ErrorsProvider();
+  vscode.window.registerTreeDataProvider(
+    "errorsTree",
+    errorsProvider
+  );
+  vscode.window.createTreeView("errorsTree", {
+    treeDataProvider: errorsProvider
+  });
+  if (vscode.window.activeTextEditor?.document.uri.fsPath !== void 0) {
+    try {
+      data = await updateDBData(vscode.window.activeTextEditor?.document.uri.fsPath);
+    } catch (e) {
+      let result = e.message;
+      vscode.window.showErrorMessage(result);
+    }
+    vscode.window.showInformationMessage(`Found ${data.length} errors in: ${vscode.window.activeTextEditor?.document.uri.fsPath}`);
+    updateDecorators(data);
+    errorsProvider.refresh(data);
+  }
+  vscode.workspace.onDidChangeConfiguration((event) => {
+    if (event.affectsConfiguration("threatscope")) {
+      config = vscode.workspace.getConfiguration("threatscope");
+      pool = new import_pg.Pool({
+        user: config.get("DB.Login"),
+        host: config.get("DB.Host"),
+        database: config.get("DB.DataBase"),
+        password: config.get("DB.Password"),
+        port: config.get("DB.Port")
+      });
+    }
+  });
+  vscode.window.onDidChangeActiveTextEditor(async (editor) => {
+    if (vscode.window.activeTextEditor?.document.uri.fsPath === void 0) {
+      return;
+    }
+    let data2;
+    try {
+      data2 = await updateDBData(vscode.window.activeTextEditor?.document.uri.fsPath);
+    } catch (e) {
+      let result = e.message;
+      vscode.window.showErrorMessage(result);
+    }
+    vscode.window.showInformationMessage(`Found ${data2.length} errors in: ${vscode.window.activeTextEditor?.document.uri.fsPath}`);
+    updateDecorators(data2);
+    errorsProvider.refresh(data2);
+  });
+}
+function updateDecorators(data) {
+  if (notConfirmed\u0421riticalityDecoration !== void 0)
+    notConfirmed\u0421riticalityDecoration.dispose();
+  if (low\u0421riticalityDecoration !== void 0)
+    low\u0421riticalityDecoration.dispose();
+  if (medium\u0421riticalityDecoration !== void 0)
+    medium\u0421riticalityDecoration.dispose();
+  if (high\u0421riticalityDecoration !== void 0)
+    high\u0421riticalityDecoration.dispose();
+  if (critical\u0421riticalityDecoration !== void 0)
+    critical\u0421riticalityDecoration.dispose();
+  if (unknown\u0421riticalityDecoration !== void 0)
+    unknown\u0421riticalityDecoration.dispose();
+  const notConfirmedOptions = [];
+  const low\u0421riticalityOptions = [];
+  const medium\u0421riticalityOptions = [];
+  const high\u0421riticalityOptions = [];
+  const critical\u0421riticalityOptions = [];
+  const unknown\u0421riticalityOptions = [];
+  notConfirmed\u0421riticalityDecoration = vscode.window.createTextEditorDecorationType({
+    backgroundColor: "rgba(" + config.get("Colour.Status.NotConfirmed") + ")",
+    opacity: "100%",
+    isWholeLine: true
+  });
+  low\u0421riticalityDecoration = vscode.window.createTextEditorDecorationType({
+    backgroundColor: "rgba(" + config.get("Colour.Severity.LowSeverity") + ")",
+    opacity: "100%",
+    isWholeLine: true
+  });
+  medium\u0421riticalityDecoration = vscode.window.createTextEditorDecorationType({
+    backgroundColor: "rgba(" + config.get("Colour.Severity.MediumSeverity") + ")",
+    opacity: "100%",
+    isWholeLine: true
+  });
+  high\u0421riticalityDecoration = vscode.window.createTextEditorDecorationType({
+    backgroundColor: "rgba(" + config.get("Colour.Severity.HighSeverity") + ")",
+    opacity: "100%",
+    isWholeLine: true
+  });
+  critical\u0421riticalityDecoration = vscode.window.createTextEditorDecorationType({
+    backgroundColor: "rgba(" + config.get("Colour.Severity.CriticalSeverity") + ")",
+    opacity: "100%",
+    isWholeLine: true
+  });
+  unknown\u0421riticalityDecoration = vscode.window.createTextEditorDecorationType({
+    backgroundColor: "rgba(" + config.get("Colour.Severity.UnknownSeverity") + ")",
+    opacity: "100%",
+    isWholeLine: true
+  });
+  data.forEach((error) => {
+    const Position2 = new vscode.Position(Number(error.line) - 1, 0);
+    const range = new vscode.Range(Position2, Position2);
+    const message = new vscode.MarkdownString("Status: " + error.statusname + "  \nSeverity: " + error.severityname + "\n\n" + error.errorname + "  \n" + error.errordescription + `  
 
 Change severity to 
-			[low](command:threatscope.changeSeverity?[${o.line},${JSON.stringify("\u043D\u0438\u0437\u043A\u0430\u044F")}]) 
-			[medium](command:threatscope.changeSeverity?[${o.line},${JSON.stringify("\u0441\u0440\u0435\u0434\u043D\u044F\u044F")}])	
-			[high](command:threatscope.changeSeverity?[${o.line},${JSON.stringify("\u0432\u044B\u0441\u043E\u043A\u0430\u044F")}])	
-			[critical](command:threatscope.changeSeverity?[${o.line},${JSON.stringify("\u043A\u0440\u0438\u0442\u0438\u0447\u043D\u0430\u044F")}])
-			[unknown](command:threatscope.changeSeverity?[${o.line},${JSON.stringify("\u043D\u0435_\u0443\u043A\u0430\u0437\u0430\u043D\u0430")}])   
+			[low](command:threatscope.changeSeverity?[${error.line},${JSON.stringify("\u043D\u0438\u0437\u043A\u0430\u044F")}]) 
+			[medium](command:threatscope.changeSeverity?[${error.line},${JSON.stringify("\u0441\u0440\u0435\u0434\u043D\u044F\u044F")}])	
+			[high](command:threatscope.changeSeverity?[${error.line},${JSON.stringify("\u0432\u044B\u0441\u043E\u043A\u0430\u044F")}])	
+			[critical](command:threatscope.changeSeverity?[${error.line},${JSON.stringify("\u043A\u0440\u0438\u0442\u0438\u0447\u043D\u0430\u044F")}])
+			[unknown](command:threatscope.changeSeverity?[${error.line},${JSON.stringify("\u043D\u0435_\u0443\u043A\u0430\u0437\u0430\u043D\u0430")}])   
 
 Change severity to 
-			[not Confirmed](command:threatscope.changeStatus?[${o.line},${JSON.stringify("\u043D\u0435_\u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u043E",null,1)}])	
-			[confirmed](command:threatscope.changeStatus?[${o.line},${JSON.stringify("\u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u043E")}])`);l.isTrusted=!0;let f={range:c,hoverMessage:l};if(o.statusname.toLowerCase()==="\u043D\u0435 \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u043E")e.push(f);else switch(o.severityname.toLowerCase()){case"low":case"\u043D\u0438\u0437\u043A\u0430\u044F":t.push(f);break;case"medium":case"\u0441\u0440\u0435\u0434\u043D\u044F\u044F":s.push(f);break;case"high":case"\u0432\u044B\u0441\u043E\u043A\u0430\u044F":i.push(f);break;case"critical":case"\u043A\u0440\u0438\u0442\u0438\u0447\u043D\u0430\u044F":n.push(f);break;case"unknown":case"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u0430":a.push(f);break;default:e.push(f);break}}),h.window.activeTextEditor&&(h.window.activeTextEditor.setDecorations(ye,e),h.window.activeTextEditor.setDecorations(ve,t),h.window.activeTextEditor.setDecorations(we,s),h.window.activeTextEditor.setDecorations(ge,i),h.window.activeTextEditor.setDecorations(_e,n),h.window.activeTextEditor.setDecorations(Se,a))}async function G(r){return r===void 0?void 0:(await te.query(`select "Errorlist".errorname,"Errorlist".errordescription,"Recordlist".description,"Recordlist"."location","Recordlist".line,"Severity".severityname,"Status".statusname,"Users".username from "Markups" join "Recordlist" ON "Recordlist".record_id = "Markups".record_id join "Errorlist" ON "Errorlist".error_id = "Recordlist".error_id join "Severity" ON "Severity".severity_id = "Markups".severity_id join "Status" ON "Status".status_id = "Markups".status_id join "Users" ON "Users".user_id = "Markups".user_id where lower("Recordlist"."location") = lower('${r}')  ORDER by line`)).rows}var Ee=class{errorsData=[];m_onDidChangeTreeData=new h.EventEmitter;onDidChangeTreeData=this.m_onDidChangeTreeData.event;constructor(){h.commands.registerCommand("errorTree.refresh",e=>this.refresh()),h.commands.registerCommand("errorTree.onItemClicked",e=>this.onItemClicked(e)),h.commands.registerCommand("errorTree.changeToNotConfirmed",e=>this.changeToNotConfirmed(e)),h.commands.registerCommand("errorTree.changeToConfirmed",e=>this.changeToConfirmed(e)),h.commands.registerCommand("errorTree.changeToLowSeverity",e=>this.changeToLowSeverity(e)),h.commands.registerCommand("errorTree.changeToMediumSeverity",e=>this.changeToMediumSeverity(e)),h.commands.registerCommand("errorTree.changeToHighSeverity",e=>this.changeToHighSeverity(e)),h.commands.registerCommand("errorTree.changeToCriticalSeverity",e=>this.changeToCriticalSeverity(e)),h.commands.registerCommand("errorTree.changeToUnknownSeverity",e=>this.changeToUnknownSeverity(e))}changeToNotConfirmed(e){this.changeStatus(e,"\u043D\u0435 \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u043E"),h.window.showInformationMessage("changed to not confirmed")}changeToConfirmed(e){this.changeStatus(e,"\u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u043E"),h.window.showInformationMessage("changed to confirmed")}changeToLowSeverity(e){this.changeSeverity(e,"\u043D\u0438\u0437\u043A\u0430\u044F"),h.window.showInformationMessage("Changed to low severity")}changeToMediumSeverity(e){this.changeSeverity(e,"\u0441\u0440\u0435\u0434\u043D\u044F\u044F"),h.window.showInformationMessage("Changed to medium severity")}changeToHighSeverity(e){this.changeSeverity(e,"\u0432\u044B\u0441\u043E\u043A\u0430\u044F"),h.window.showInformationMessage("changed to high severity")}changeToCriticalSeverity(e){this.changeSeverity(e,"\u043A\u0440\u0438\u0442\u0438\u0447\u043D\u0430\u044F"),h.window.showInformationMessage("changed to critical severity")}changeToUnknownSeverity(e){this.changeSeverity(e,"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u0430"),h.window.showInformationMessage("Changed to unknown severity")}async changeSeverity(e,t){let s=h.window.activeTextEditor?.document.uri.fsPath.toLowerCase(),i=e.line;await ys(i,t);let n=await G(s);this.refresh(n),j(n)}async changeStatus(e,t){let s=h.window.activeTextEditor?.document.uri.fsPath.toLowerCase(),i=e.line;await vs(i,t);let n=await G(s);this.refresh(n),j(n)}onItemClicked(e){if(h.window.activeTextEditor===void 0)return;let t=h.window.activeTextEditor,s=e.line,i=new h.Position(s-1,0);t.selection=new h.Selection(i,i),t.revealRange(new h.Range(i,i))}refresh(e){e!==void 0&&(this.errorsData=[],e.forEach(t=>{t.location.toLowerCase()===h.window.activeTextEditor?.document.uri.fsPath.toLowerCase()&&(this.errorsData.push(new D("["+t.line+"] "+t.errorname,t.line)),this.errorsData.at(-1)?.addChild(new D("Status: "+t.statusname,t.line)),this.errorsData.at(-1)?.addChild(new D("Severity: "+t.severityname,t.line)),this.errorsData.at(-1)?.addChild(new D("Description: "+t.errordescription,t.line)))})),this.m_onDidChangeTreeData.fire(void 0)}getTreeItem(e){let t=e.label?e.label.toString():"",s=new h.TreeItem(e.label,e.collapsibleState);return s.command={command:"errorTree.onItemClicked",title:t,arguments:[e]},s}getChildren(e){return e===void 0?this.errorsData:e.children}};async function ys(r,e){let t=h.window.activeTextEditor?.document.uri.fsPath.toLowerCase();await te.query(`update "Markups" set severity_id = (select severity_id from "Severity" where lower(severityname) = lower('${e}')),
-	user_id = (select user_id from "Users" where lower(username) = lower('${g.get("DB.Login")}')) 
-	where record_id = (select record_id from "Recordlist" where lower(location) = lower('${t}') and line = '${r}')`)}async function vs(r,e){let t=h.window.activeTextEditor?.document.uri.fsPath.toLowerCase();await te.query(`update "Markups" set status_id = (select status_id from "Status" where lower(statusname) = lower('${e}')), 
-	user_id = (select user_id from "Users" where lower(username) = lower('${g.get("DB.Login")}')) 
-	where record_id = (select record_id from "Recordlist" where lower(location) = lower('${t}') and line = '${r}')`)}var D=class extends h.TreeItem{label;children=[];line;constructor(e,t){super(e,h.TreeItemCollapsibleState.None),this.label=e,this.collapsibleState=h.TreeItemCollapsibleState.None,this.line=t}addChild(e){this.collapsibleState=h.TreeItemCollapsibleState.Collapsed,this.children.push(e)}};function Sa(){te.end()}0&&(module.exports={ErrorTreeItem,ErrorsProvider,activate,deactivate});
+			[not Confirmed](command:threatscope.changeStatus?[${error.line},${JSON.stringify("\u043D\u0435_\u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u043E", null, 1)}])	
+			[confirmed](command:threatscope.changeStatus?[${error.line},${JSON.stringify("\u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u043E")}])`);
+    message.isTrusted = true;
+    const decoration = {
+      range,
+      hoverMessage: message
+    };
+    if (error.statusname.toLowerCase() === "\u043D\u0435 \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u043E") {
+      notConfirmedOptions.push(decoration);
+    } else {
+      switch (error.severityname.toLowerCase()) {
+        case "low":
+        case "\u043D\u0438\u0437\u043A\u0430\u044F":
+          low\u0421riticalityOptions.push(decoration);
+          break;
+        case "medium":
+        case "\u0441\u0440\u0435\u0434\u043D\u044F\u044F":
+          medium\u0421riticalityOptions.push(decoration);
+          break;
+        case "high":
+        case "\u0432\u044B\u0441\u043E\u043A\u0430\u044F":
+          high\u0421riticalityOptions.push(decoration);
+          break;
+        case "critical":
+        case "\u043A\u0440\u0438\u0442\u0438\u0447\u043D\u0430\u044F":
+          critical\u0421riticalityOptions.push(decoration);
+          break;
+        case "unknown":
+        case "\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u0430":
+          unknown\u0421riticalityOptions.push(decoration);
+          break;
+        default:
+          notConfirmedOptions.push(decoration);
+          break;
+      }
+    }
+  });
+  if (vscode.window.activeTextEditor) {
+    vscode.window.activeTextEditor.setDecorations(notConfirmed\u0421riticalityDecoration, notConfirmedOptions);
+    vscode.window.activeTextEditor.setDecorations(low\u0421riticalityDecoration, low\u0421riticalityOptions);
+    vscode.window.activeTextEditor.setDecorations(medium\u0421riticalityDecoration, medium\u0421riticalityOptions);
+    vscode.window.activeTextEditor.setDecorations(high\u0421riticalityDecoration, high\u0421riticalityOptions);
+    vscode.window.activeTextEditor.setDecorations(critical\u0421riticalityDecoration, critical\u0421riticalityOptions);
+    vscode.window.activeTextEditor.setDecorations(unknown\u0421riticalityDecoration, unknown\u0421riticalityOptions);
+  }
+}
+async function updateDBData(editorPath) {
+  if (editorPath === void 0)
+    return;
+  let result = await pool.query(`select "Errorlist".errorname,"Errorlist".errordescription,"Recordlist".description,"Recordlist"."location","Recordlist".line,"Severity".severityname,"Status".statusname,"Users".username from "Markups" join "Recordlist" ON "Recordlist".record_id = "Markups".record_id join "Errorlist" ON "Errorlist".error_id = "Recordlist".error_id join "Severity" ON "Severity".severity_id = "Markups".severity_id join "Status" ON "Status".status_id = "Markups".status_id join "Users" ON "Users".user_id = "Markups".user_id where lower("Recordlist"."location") = lower('${editorPath}')  ORDER by line`);
+  return result.rows;
+}
+var ErrorsProvider = class {
+  errorsData = [];
+  m_onDidChangeTreeData = new vscode.EventEmitter();
+  onDidChangeTreeData = this.m_onDidChangeTreeData.event;
+  constructor() {
+    vscode.commands.registerCommand("errorTree.refresh", (r) => this.refresh());
+    vscode.commands.registerCommand("errorTree.onItemClicked", (item) => this.onItemClicked(item));
+    vscode.commands.registerCommand("errorTree.changeToNotConfirmed", (item) => this.changeToNotConfirmed(item));
+    vscode.commands.registerCommand("errorTree.changeToConfirmed", (item) => this.changeToConfirmed(item));
+    vscode.commands.registerCommand("errorTree.changeToLowSeverity", (item) => this.changeToLowSeverity(item));
+    vscode.commands.registerCommand("errorTree.changeToMediumSeverity", (item) => this.changeToMediumSeverity(item));
+    vscode.commands.registerCommand("errorTree.changeToHighSeverity", (item) => this.changeToHighSeverity(item));
+    vscode.commands.registerCommand("errorTree.changeToCriticalSeverity", (item) => this.changeToCriticalSeverity(item));
+    vscode.commands.registerCommand("errorTree.changeToUnknownSeverity", (item) => this.changeToUnknownSeverity(item));
+  }
+  changeToNotConfirmed(item) {
+    this.changeStatus(item, "\u043D\u0435 \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u043E");
+    vscode.window.showInformationMessage("changed to not confirmed");
+  }
+  changeToConfirmed(item) {
+    this.changeStatus(item, "\u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u043E");
+    vscode.window.showInformationMessage("changed to confirmed");
+  }
+  changeToLowSeverity(item) {
+    this.changeSeverity(item, "\u043D\u0438\u0437\u043A\u0430\u044F");
+    vscode.window.showInformationMessage("Changed to low severity");
+  }
+  changeToMediumSeverity(item) {
+    this.changeSeverity(item, "\u0441\u0440\u0435\u0434\u043D\u044F\u044F");
+    vscode.window.showInformationMessage("Changed to medium severity");
+  }
+  changeToHighSeverity(item) {
+    this.changeSeverity(item, "\u0432\u044B\u0441\u043E\u043A\u0430\u044F");
+    vscode.window.showInformationMessage("changed to high severity");
+  }
+  changeToCriticalSeverity(item) {
+    this.changeSeverity(item, "\u043A\u0440\u0438\u0442\u0438\u0447\u043D\u0430\u044F");
+    vscode.window.showInformationMessage("changed to critical severity");
+  }
+  changeToUnknownSeverity(item) {
+    this.changeSeverity(item, "\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u0430");
+    vscode.window.showInformationMessage("Changed to unknown severity");
+  }
+  //remove regex 
+  async changeSeverity(item, severity) {
+    let filePath = vscode.window.activeTextEditor?.document.uri.fsPath.toLowerCase();
+    let line = item.line;
+    await changeSeverity(line, severity);
+    let data = await updateDBData(filePath);
+    this.refresh(data);
+    updateDecorators(data);
+  }
+  async changeStatus(item, status) {
+    let filePath = vscode.window.activeTextEditor?.document.uri.fsPath.toLowerCase();
+    let line = item.line;
+    await changeStatus(line, status);
+    let data = await updateDBData(filePath);
+    this.refresh(data);
+    updateDecorators(data);
+  }
+  onItemClicked(item) {
+    if (vscode.window.activeTextEditor === void 0)
+      return;
+    let editor = vscode.window.activeTextEditor;
+    let line = item.line;
+    let pos = new vscode.Position(line - 1, 0);
+    editor.selection = new vscode.Selection(pos, pos);
+    editor.revealRange(new vscode.Range(pos, pos));
+  }
+  refresh(values) {
+    if (values !== void 0) {
+      this.errorsData = [];
+      values.forEach((error) => {
+        if (error.location.toLowerCase() === vscode.window.activeTextEditor?.document.uri.fsPath.toLowerCase()) {
+          this.errorsData.push(new ErrorTreeItem("[" + error.line + "] " + error.errorname, error.line));
+          this.errorsData.at(-1)?.addChild(new ErrorTreeItem("Status: " + error.statusname, error.line));
+          this.errorsData.at(-1)?.addChild(new ErrorTreeItem("Severity: " + error.severityname, error.line));
+          this.errorsData.at(-1)?.addChild(new ErrorTreeItem("Description: " + error.errordescription, error.line));
+        }
+      });
+    }
+    this.m_onDidChangeTreeData.fire(void 0);
+  }
+  getTreeItem(element) {
+    let title = element.label ? element.label.toString() : "";
+    let item = new vscode.TreeItem(element.label, element.collapsibleState);
+    item.command = { command: "errorTree.onItemClicked", title, arguments: [element] };
+    return item;
+  }
+  getChildren(element) {
+    if (element === void 0) {
+      return this.errorsData;
+    } else {
+      return element.children;
+    }
+  }
+};
+async function changeSeverity(line, severity) {
+  let filePath = vscode.window.activeTextEditor?.document.uri.fsPath.toLowerCase();
+  await pool.query(`update "Markups" set severity_id = (select severity_id from "Severity" where lower(severityname) = lower('${severity}')),
+	user_id = (select user_id from "Users" where lower(username) = lower('${config.get("DB.Login")}')) 
+	where record_id = (select record_id from "Recordlist" where lower(location) = lower('${filePath}') and line = '${line}')`);
+}
+async function changeStatus(line, status) {
+  let filePath = vscode.window.activeTextEditor?.document.uri.fsPath.toLowerCase();
+  await pool.query(`update "Markups" set status_id = (select status_id from "Status" where lower(statusname) = lower('${status}')), 
+	user_id = (select user_id from "Users" where lower(username) = lower('${config.get("DB.Login")}')) 
+	where record_id = (select record_id from "Recordlist" where lower(location) = lower('${filePath}') and line = '${line}')`);
+}
+var ErrorTreeItem = class extends vscode.TreeItem {
+  label;
+  children = [];
+  line;
+  constructor(label, line) {
+    super(label, vscode.TreeItemCollapsibleState.None);
+    this.label = label;
+    this.collapsibleState = vscode.TreeItemCollapsibleState.None;
+    this.line = line;
+  }
+  addChild(children) {
+    this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+    this.children.push(children);
+  }
+};
+function deactivate() {
+  pool.end();
+}
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  ErrorTreeItem,
+  ErrorsProvider,
+  activate,
+  deactivate
+});
+//# sourceMappingURL=extension.js.map
